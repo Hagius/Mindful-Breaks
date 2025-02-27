@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HAGIUS - Active Journey</title>
+  <style>
+    /* RESET & BASE STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+    }
+    body {
+      font-family: "Helvetica", sans-serif;
+      font-weight: 700; /* bold */
+      background-color: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    a, button {
+      cursor: pointer;
+    }
+    h1, h2, h3 {
+      margin-bottom: 0.5rem;
+      text-transform: uppercase; /* capitalized headers */
+    }
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      font-weight: 400; /* paragraphs slightly less bold */
+    }
+    .hidden {
+      display: none !important; /* ensure absolutely hidden */
+    }
+
+    /* TOP NAV */
+    #topNav {
+      width: 100%;
+      text-align: center;
+      border-bottom: 3px solid #000;
+      padding: 1rem;
+      font-size: 1.4rem;
+    }
+
+    /* PAGE WRAPPER */
+    .page {
+      width: 100%;
+      max-width: 700px;
+      margin: 2rem auto;
+      text-align: center;
+    }
+
+    /* LANDING PAGE (DEFAULT VISIBLE) */
+    #landingPage h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 1px;
+    }
+    #landingPage p {
+      font-size: 1.2rem;
+      max-width: 500px;
+      margin: 0 auto 2rem auto;
+    }
+    .start-btn {
+      padding: 1rem 2rem;
+      background: #000;
+      color: #fff;
+      border: 2px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .start-btn:hover {
+      background-color: #333;
+    }
+
+    /* TIMER SECTION */
+    #timerSection h2 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+    }
+    #timerCountdown {
+      font-size: 3rem;
+      margin: 1.5rem 0;
+    }
+    .timer-progress-container {
+      width: 100%;
+      background-color: #eee;
+      height: 12px;
+      border: 2px solid #000;
+      margin-bottom: 1.5rem;
+    }
+    .timer-progress-bar {
+      height: 100%;
+      background-color: #000;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    .skip-btn {
+      padding: 1rem 2rem;
+      background: #000;
+      color: #fff;
+      border: 2px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .skip-btn:hover {
+      background-color: #333;
+    }
+
+    /* EXERCISE SECTION */
+    #exerciseSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #exerciseImage {
+      width: 100%;
+      max-width: 300px;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      margin: 0 auto 1rem auto;
+    }
+    #exerciseTitle {
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+      font-size: 1.6rem;
+    }
+    #exerciseSubtitle {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    #exerciseTimer {
+      font-size: 2rem;
+      margin: 1rem 0;
+    }
+    .exercise-progress-container {
+      width: 100%;
+      background-color: #eee;
+      height: 12px;
+      border: 2px solid #000;
+      margin-bottom: 1.5rem;
+    }
+    .exercise-progress-bar {
+      height: 100%;
+      background-color: #000;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    .next-ex-btn {
+      padding: 1rem 2rem;
+      background: #000;
+      color: #fff;
+      border: 2px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .next-ex-btn:hover {
+      background-color: #333;
+    }
+
+    /* FINISH SECTION */
+    #finishSection h2 {
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+      font-size: 1.8rem;
+    }
+    #finishSection p {
+      font-size: 1.2rem;
+      max-width: 500px;
+      margin: 0 auto 2rem auto;
+    }
+    .done-list {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      margin: 0 auto 2rem auto;
+      max-width: 600px;
+    }
+    .done-list li {
+      border: 2px solid #000;
+      background-color: #fff;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .done-list li[data-tag="more"] {
+      background-color: #d1e7dd;
+    }
+    .done-list li[data-tag="less"] {
+      background-color: #f8d7da;
+    }
+    .restart-btn {
+      padding: 1rem 2rem;
+      background: #000;
+      color: #fff;
+      border: 2px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .restart-btn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP NAV -->
+  <div id="topNav">HAGIUS</div>
+
+  <!-- LANDING PAGE -->
+  <div id="landingPage" class="page">
+    <h1>Your Active Journey Starts Now</h1>
+    <p>
+      A short break every 45 minutes can transform your day.
+      Move with purpose, and keep your body and mind in balance.
+    </p>
+    <button class="start-btn" onclick="showTimer()">Start</button>
+  </div>
+
+  <!-- TIMER SECTION (hidden by default) -->
+  <div id="timerSection" class="page hidden">
+    <h2>Next Session Starts In</h2>
+    <div id="timerCountdown">45:00</div>
+    <div class="timer-progress-container">
+      <div class="timer-progress-bar" id="timerProgress"></div>
+    </div>
+    <button class="skip-btn" onclick="skipTimer()">Skip</button>
+  </div>
+
+  <!-- EXERCISE SECTION (hidden by default) -->
+  <div id="exerciseSection" class="page hidden">
+    <img id="exerciseImage" src="" alt="Exercise Image" />
+    <h2 id="exerciseTitle">Exercise Name</h2>
+    <p id="exerciseSubtitle">Exercise description</p>
+
+    <div class="exercise-progress-container">
+      <div class="exercise-progress-bar" id="exerciseProgress"></div>
+    </div>
+    <div id="exerciseTimer">01:00</div>
+
+    <button class="next-ex-btn" onclick="skipExercise()">Next Exercise</button>
+  </div>
+
+  <!-- FINISH SECTION (hidden by default) -->
+  <div id="finishSection" class="page hidden">
+    <h2>Well Done!</h2>
+    <p>
+      You’ve completed your exercise break.
+      Now, tap each exercise below to adjust its future frequency:
+      <br>
+      <em>Cycle through "more" (2), "less" (0.5), or nothing (1).</em>
+    </p>
+    <ul id="doneList" class="done-list"></ul>
+    <button class="restart-btn" onclick="restartTimer()">Start Next 45-minute Timer</button>
+  </div>
+
+  <script>
+    /*************************************
+     * CONFIG & DATA
+     *************************************/
+    const REMINDER_DURATION = 45 * 60; // 45 min in seconds
+    // For testing, you can reduce:
+    // const REMINDER_DURATION = 15;
+
+    const EXERCISE_SEGMENT_DURATION = 60; // 1 minute each
+    let timerInterval, exerciseInterval;
+    let currentExerciseIndex = 0;
+    let exerciseSegments = [];
+    let completedExercises = [];
+
+    // Tag states: "nothing" (default), "more" (2), "less" (0.5)
+    const tagStates = ["nothing", "more", "less"];
+
+    // FULL EXERCISE POOL (8 total). We'll pick up to 5 segments each session.
+    const exercisesPool = [
+      {
+        name: "Single-Leg Balance w/ Toe Taps",
+        description: "Improve balance & ankle stability",
+        unilateral: true,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Standing Hip Circles",
+        description: "Loosen tight hips & improve joint mobility",
+        unilateral: false,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Neck Tilts & Rotations",
+        description: "Release neck tension from prolonged sitting",
+        unilateral: false,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Shoulder Rolls",
+        description: "Reduce shoulder stiffness & enhance posture",
+        unilateral: false,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Standing Figure-4 Stretch",
+        description: "Open up hips & glutes to counter desk posture",
+        unilateral: true,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Wall Angels",
+        description: "Promote better shoulder alignment & mobility",
+        unilateral: false,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Thoracic Extension",
+        description: "Relieve mid-back tightness & improve upright posture",
+        unilateral: false,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      },
+      {
+        name: "Standing Lateral Leg Raises",
+        description: "Strengthen hip abductors & improve balance",
+        unilateral: true,
+        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+        probability: 1
+      }
+    ];
+
+    /*************************************
+     * SHUFFLE
+     *************************************/
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    /*************************************
+     * Hide all pages
+     *************************************/
+    function hideAllPages() {
+      document.getElementById("landingPage").classList.add("hidden");
+      document.getElementById("timerSection").classList.add("hidden");
+      document.getElementById("exerciseSection").classList.add("hidden");
+      document.getElementById("finishSection").classList.add("hidden");
+    }
+
+    /*************************************
+     * LANDING → TIMER
+     *************************************/
+    function showTimer() {
+      hideAllPages();
+      document.getElementById("timerSection").classList.remove("hidden");
+      startTimer();
+    }
+
+    /*************************************
+     * TIMER
+     *************************************/
+    function startTimer() {
+      let remaining = REMINDER_DURATION;
+      updateTimerDisplay(remaining);
+
+      const progressBar = document.getElementById("timerProgress");
+      progressBar.style.width = "100%";
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        remaining--;
+        updateTimerDisplay(remaining);
+        progressBar.style.width = (remaining / REMINDER_DURATION * 100) + "%";
+
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          goToExercises();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      document.getElementById("timerCountdown").textContent =
+        (minutes < 10 ? "0" + minutes : minutes) + ":" +
+        (secs < 10 ? "0" + secs : secs);
+    }
+
+    function skipTimer() {
+      clearInterval(timerInterval);
+      goToExercises();
+    }
+
+    /*************************************
+     * GO TO EXERCISES
+     *************************************/
+    function goToExercises() {
+      hideAllPages();
+      document.getElementById("exerciseSection").classList.remove("hidden");
+
+      generateExerciseSegments();
+      currentExerciseIndex = 0;
+      completedExercises = [];
+      startExerciseSegment();
+    }
+
+    /*************************************
+     * GENERATE EXERCISE SEGMENTS (Up to 5)
+     *************************************/
+    function generateExerciseSegments() {
+      exerciseSegments = [];
+      let shuffled = shuffle([...exercisesPool]);
+      let totalSegments = 0;
+      for (let ex of shuffled) {
+        const needed = ex.unilateral ? 2 : 1;
+        if (totalSegments + needed <= 5) {
+          if (ex.unilateral) {
+            exerciseSegments.push({ ...ex, side: "Left", status: "upcoming" });
+            exerciseSegments.push({ ...ex, side: "Right", status: "upcoming" });
+          } else {
+            exerciseSegments.push({ ...ex, side: "", status: "upcoming" });
+          }
+          totalSegments += needed;
+        }
+        if (totalSegments === 5) break;
+      }
+    }
+
+    /*************************************
+     * START EXERCISE SEGMENT
+     *************************************/
+    function startExerciseSegment() {
+      if (currentExerciseIndex >= exerciseSegments.length) {
+        finishExercises();
+        return;
+      }
+      // Mark current as ongoing
+      exerciseSegments.forEach((seg, i) => {
+        if (i === currentExerciseIndex) {
+          seg.status = "ongoing";
+        } else if (seg.status !== "done") {
+          seg.status = "upcoming";
+        }
+      });
+
+      const current = exerciseSegments[currentExerciseIndex];
+      const fullName = current.name + (current.side ? ` (${current.side})` : "");
+      document.getElementById("exerciseImage").src = current.image;
+      document.getElementById("exerciseImage").alt = fullName;
+      document.getElementById("exerciseTitle").textContent = fullName;
+      document.getElementById("exerciseSubtitle").textContent = current.description;
+
+      let remaining = EXERCISE_SEGMENT_DURATION;
+      updateExerciseTimer(remaining);
+      const progressBar = document.getElementById("exerciseProgress");
+      progressBar.style.width = "100%";
+
+      clearInterval(exerciseInterval);
+      exerciseInterval = setInterval(() => {
+        remaining--;
+        updateExerciseTimer(remaining);
+        progressBar.style.width = (remaining / EXERCISE_SEGMENT_DURATION * 100) + "%";
+        if (remaining <= 0) {
+          clearInterval(exerciseInterval);
+          // Mark as done + add to completed
+          exerciseSegments[currentExerciseIndex].status = "done";
+          completedExercises.push({
+            name: current.name,
+            side: current.side,
+            description: current.description,
+            tag: "nothing"
+          });
+          currentExerciseIndex++;
+          startExerciseSegment();
+        }
+      }, 1000);
+    }
+
+    function updateExerciseTimer(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      document.getElementById("exerciseTimer").textContent =
+        (minutes < 10 ? "0" + minutes : minutes) + ":" +
+        (secs < 10 ? "0" + secs : secs);
+    }
+
+    function skipExercise() {
+      clearInterval(exerciseInterval);
+      const current = exerciseSegments[currentExerciseIndex];
+      current.status = "done";
+      completedExercises.push({
+        name: current.name,
+        side: current.side,
+        description: current.description,
+        tag: "nothing"
+      });
+      currentExerciseIndex++;
+      startExerciseSegment();
+    }
+
+    /*************************************
+     * FINISH & TAGGING
+     *************************************/
+    function finishExercises() {
+      hideAllPages();
+      document.getElementById("finishSection").classList.remove("hidden");
+      renderCompletedExercises();
+    }
+
+    function renderCompletedExercises() {
+      const doneList = document.getElementById("doneList");
+      doneList.innerHTML = "";
+      completedExercises.forEach((ex, idx) => {
+        const li = document.createElement("li");
+        const fullName = ex.name + (ex.side ? ` (${ex.side})` : "");
+        li.textContent = fullName;
+        li.setAttribute("data-index", idx);
+        li.setAttribute("data-tag", ex.tag); // current tag state
+        li.addEventListener("click", function() {
+          cycleTag(this);
+        });
+        doneList.appendChild(li);
+      });
+    }
+
+    // Cycle through "nothing" -> "more" -> "less" -> "nothing"
+    function cycleTag(li) {
+      let idx = parseInt(li.getAttribute("data-index"));
+      let currentTag = li.getAttribute("data-tag");
+      let nextIndex;
+      if (currentTag === "nothing") {
+        nextIndex = 1;
+      } else if (currentTag === "more") {
+        nextIndex = 2;
+      } else {
+        nextIndex = 0;
+      }
+      const newTag = tagStates[nextIndex];
+      li.setAttribute("data-tag", newTag);
+
+      const baseText = completedExercises[idx].name +
+        (completedExercises[idx].side ? ` (${completedExercises[idx].side})` : "");
+      li.textContent = (newTag !== "nothing")
+        ? `${baseText} [${newTag.toUpperCase()}]`
+        : baseText;
+
+      // Update probability in the pool
+      const poolItem = exercisesPool.find(e => e.name === completedExercises[idx].name);
+      if (poolItem) {
+        if (newTag === "more") {
+          poolItem.probability = 2;
+        } else if (newTag === "less") {
+          poolItem.probability = 0.5;
+        } else {
+          poolItem.probability = 1;
+        }
+      }
+      // Also update the stored tag
+      completedExercises[idx].tag = newTag;
+    }
+
+    function restartTimer() {
+      hideAllPages();
+      document.getElementById("timerSection").classList.remove("hidden");
+      startTimer();
+    }
+  </script>
+</body>
+</html>
