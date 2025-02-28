@@ -33,8 +33,8 @@
     }
     
     :root {
-      --primary-color: #214B7A;
-      --secondary-color: #F28E47;
+      --primary-color: #BCBCBC;
+      --secondary-color: #8D8D8D;
       --white-transparent-light: rgba(255, 255, 255, 0.2);
       --white-transparent-medium: rgba(255, 255, 255, 0.3);
       --white-transparent-bright: rgba(255, 255, 255, 0.4);
@@ -84,7 +84,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(to bottom, #BCBCBC, #8D8D8D);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -173,9 +173,24 @@
       transition: opacity 0.3s ease;
     }
     
-    .focus-mode .header {
-      opacity: 0;
-      pointer-events: none;
+    /* Progress Container */
+    .progress-container {
+      position: fixed;
+      bottom: calc(var(--element-height) + var(--button-spacing) + env(safe-area-inset-bottom));
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+      margin-bottom: 0;
+    }
+    
+    /* Hide progress container when landing page is active */
+    .landing-active .progress-container {
+      display: none;
     }
     
     .logo {
@@ -188,7 +203,7 @@
     /* Main Container */
     .page {
       position: fixed;
-      top: 25%;
+      top: 40%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 100%;
@@ -203,10 +218,6 @@
     .page.active {
       opacity: 1;
       pointer-events: auto;
-    }
-    
-    .focus-mode .page {
-      opacity: 0.7;
     }
     
     /* Landing Page */
@@ -245,18 +256,42 @@
       background: var(--white-transparent-bright);
     }
     
-    /* Timer Section */
-    #timerSection h2 {
-      font-size: 1.6rem;
-      margin-bottom: 1rem;
-      letter-spacing: 1px;
+    /* Landing page bottom start button */
+    .bottom-start-btn {
+      background: var(--white-transparent-light);
+      border: none;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      height: var(--element-height);
+      line-height: var(--element-height);
+      padding: 0 var(--element-padding);
       text-transform: uppercase;
+      position: fixed;
+      bottom: env(safe-area-inset-bottom);
+      left: 0;
+      right: 0;
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
     }
     
-    #timerCountdown {
-      font-size: 3rem;
-      margin: 1.5rem 0;
+    .bottom-start-btn:hover {
+      background: var(--white-transparent-bright);
+    }
+    
+    /* Timer Section */
+    #timerSection {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .focus-time-text {
+      font-size: calc(var(--element-height) * var(--font-size-button));
       font-weight: bold;
+      text-transform: uppercase;
     }
     
     .timer-progress-container {
@@ -264,8 +299,14 @@
       height: var(--element-height);
       background: var(--white-transparent-light);
       overflow: hidden;
-      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: background var(--transition-speed);
       position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .timer-progress-container:hover {
+      background: var(--white-transparent-bright);
     }
     
     .timer-progress-bar {
@@ -280,25 +321,15 @@
       will-change: width;
     }
     
-    .skip-btn {
-      background: var(--white-transparent-light);
-      border: none;
-      font-size: calc(var(--element-height) * var(--font-size-button));
+    .timer-remaining {
+      position: absolute;
+      font-size: calc(var(--element-height) * 0.4);
       font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: background var(--transition-speed);
-      height: var(--element-height);
-      line-height: var(--element-height);
-      padding: 0 var(--element-padding);
-      text-transform: uppercase;
-      margin: 0 auto;
-      min-width: 200px;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .skip-btn:hover {
-      background: var(--white-transparent-bright);
+      color: white;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
     }
     
     /* Exercise Section */
@@ -312,10 +343,9 @@
     
     .exercise-display {
       position: relative;
-      width: 250px;
-      height: 250px;
+      width: 300px;
+      height: 400px; /* 3:4 aspect ratio */
       background: var(--white-transparent-light);
-      border-radius: 50%;
       margin: 0 auto 20px auto;
       display: flex;
       align-items: center;
@@ -352,8 +382,8 @@
       height: var(--element-height);
       background: var(--white-transparent-light);
       overflow: hidden;
-      margin-bottom: 1.5rem;
       position: relative;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .exercise-progress-bar {
@@ -368,25 +398,15 @@
       will-change: width;
     }
     
-    .next-ex-btn {
-      background: var(--white-transparent-light);
-      border: none;
-      font-size: calc(var(--element-height) * var(--font-size-button));
+    .exercise-remaining {
+      position: absolute;
+      font-size: calc(var(--element-height) * 0.4);
       font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: background var(--transition-speed);
-      height: var(--element-height);
-      line-height: var(--element-height);
-      padding: 0 var(--element-padding);
-      text-transform: uppercase;
-      margin: 0 auto;
-      min-width: 200px;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .next-ex-btn:hover {
-      background: var(--white-transparent-bright);
+      color: white;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
     }
     
     /* Finish Section */
@@ -432,27 +452,6 @@
     
     .done-list li[data-tag="less"] {
       background: rgba(250, 128, 114, 0.3);
-    }
-    
-    .restart-btn {
-      background: var(--white-transparent-light);
-      border: none;
-      font-size: calc(var(--element-height) * var(--font-size-button));
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: background var(--transition-speed);
-      height: var(--element-height);
-      line-height: var(--element-height);
-      padding: 0 var(--element-padding);
-      text-transform: uppercase;
-      margin: 0 auto;
-      min-width: 200px;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .restart-btn:hover {
-      background: var(--white-transparent-bright);
     }
     
     /* Completion Modal */
@@ -519,8 +518,8 @@
       background: var(--white-transparent-bright);
     }
     
-    /* Focus Button Container */
-    .focus-button-container {
+    /* Button Container */
+    .button-container {
       position: fixed;
       bottom: env(safe-area-inset-bottom);
       left: 0;
@@ -531,7 +530,7 @@
       gap: var(--button-spacing);
     }
     
-    .focus-button {
+    .bottom-button {
       background: var(--white-transparent-light);
       border: none;
       flex: 1;
@@ -552,7 +551,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     
-    .focus-button:hover {
+    .bottom-button:hover {
       background: var(--white-transparent-bright);
     }
     
@@ -564,7 +563,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(to bottom, #BCBCBC, #8D8D8D);
       z-index: 100;
       overflow-y: auto;
       padding: var(--safe-top) 0 calc(70px + env(safe-area-inset-bottom)) 0;
@@ -701,7 +700,7 @@
     /* iOS PWA Installation Tip */
     .ios-install-tip {
       position: fixed;
-      bottom: calc(var(--element-height) + env(safe-area-inset-bottom) + 10px);
+      bottom: calc(var(--element-height) * 2 + var(--button-spacing) + env(safe-area-inset-bottom) + 10px);
       left: 10px;
       right: 10px;
       background: rgba(0, 0, 0, 0.8);
@@ -759,7 +758,7 @@
         --element-padding: 18px;
         --min-button-width: 140px;
       }
-      .exercise-display { width: 350px; height: 350px; }
+      .exercise-display { width: 375px; height: 500px; } /* Maintain 3:4 aspect ratio */
       .logo { max-width: 240px; }
     }
     
@@ -769,7 +768,7 @@
         --font-size-button: 0.4;
         --element-padding: 12px;
       }
-      .exercise-display { width: 220px; height: 220px; }
+      .exercise-display { width: 225px; height: 300px; } /* Maintain 3:4 aspect ratio */
     }
     
     /* Screen Reader Only */
@@ -804,9 +803,13 @@
         overflow: hidden !important;
       }
       
-      .focus-button-container {
+      .button-container {
         bottom: 0 !important;
         padding-bottom: env(safe-area-inset-bottom) !important;
+      }
+      
+      .progress-container {
+        bottom: calc(var(--element-height) + var(--button-spacing) + env(safe-area-inset-bottom)) !important;
       }
     }
 
@@ -850,17 +853,11 @@
         A short break every 45 minutes can transform your day.
         Move with purpose, and keep your body and mind in balance.
       </p>
-      <button class="start-btn" id="startButton">Start</button>
     </div>
   
     <!-- TIMER SECTION (hidden by default) -->
     <div id="timerSection" class="page">
-      <h2>Next Movement Break In</h2>
-      <div id="timerCountdown">45:00</div>
-      <div class="timer-progress-container">
-        <div class="timer-progress-bar" id="timerProgress"></div>
-      </div>
-      <button class="skip-btn" id="skipTimerButton">Skip</button>
+      <div class="focus-time-text">FOCUS TIME</div>
     </div>
   
     <!-- EXERCISE SECTION (hidden by default) -->
@@ -870,13 +867,7 @@
       </div>
       <h2 id="exerciseTitle">Exercise Name</h2>
       <p id="exerciseSubtitle">Exercise description</p>
-  
-      <div class="exercise-progress-container">
-        <div class="exercise-progress-bar" id="exerciseProgress"></div>
-      </div>
       <div id="exerciseTimer">01:00</div>
-  
-      <button class="next-ex-btn" id="nextExerciseButton">Next Exercise</button>
     </div>
   
     <!-- FINISH SECTION (hidden by default) -->
@@ -887,7 +878,21 @@
         Tap each exercise below to adjust its future frequency.
       </p>
       <ul id="doneList" class="done-list"></ul>
-      <button class="restart-btn" id="restartButton">Start Next 45-minute Timer</button>
+    </div>
+    
+    <!-- Progress Container -->
+    <div class="progress-container" id="progressContainer">
+      <!-- Timer Progress (visible when in timer section) -->
+      <div id="timerProgressContainer" class="timer-progress-container">
+        <div class="timer-progress-bar" id="timerProgress"></div>
+        <div class="timer-remaining" id="timerRemaining">45:00</div>
+      </div>
+      
+      <!-- Exercise Progress (visible when in exercise section) -->
+      <div id="exerciseProgressContainer" class="exercise-progress-container" style="display: none;">
+        <div class="exercise-progress-bar" id="exerciseProgress"></div>
+        <div class="exercise-remaining" id="exerciseRemaining">01:00</div>
+      </div>
     </div>
     
     <!-- Knowledge Section (hidden by default) -->
@@ -1015,11 +1020,22 @@
       </div>
     </div>
   
-    <!-- Focus Button Container -->
-    <div class="focus-button-container" id="buttonContainer">
-      <button id="infoButton" class="focus-button" aria-haspopup="true" aria-expanded="false">Learn More</button>
-      <button id="focusButton" class="focus-button" aria-pressed="false">Focus</button>
-      <button id="installButton" class="focus-button">Install App</button>
+    <!-- Bottom Button Container -->
+    <div class="button-container" id="buttonContainer">
+      <!-- Landing Page Buttons (new layout) -->
+      <button id="learnMoreButton" class="bottom-button landing-button">Learn More</button>
+      <button id="startButton" class="bottom-button landing-button">Start</button>
+      
+      <!-- Timer Section Buttons (new layout) -->
+      <button id="pauseTimerButton" class="bottom-button timer-button" style="display: none;">Pause</button>
+      <button id="startTimerButton" class="bottom-button timer-button" style="display: none;">Start</button>
+      
+      <!-- Exercise Section Buttons -->
+      <button id="pauseExerciseButton" class="bottom-button exercise-button" style="display: none;">Pause</button>
+      <button id="skipExerciseButton" class="bottom-button exercise-button" style="display: none;">Skip</button>
+      
+      <!-- Finish Section Buttons -->
+      <button id="restartButton" class="bottom-button finish-button" style="display: none;">Start Next Timer</button>
     </div>
   </div>
   
@@ -1058,14 +1074,19 @@
         MAX_EXERCISES: 5         // Maximum exercises per session
       };
       
-      // For testing, you can use shorter durations:
-      // const WORK_DURATION = 15; // 15 seconds for testing
+      // For testing, uncomment these lines to use shorter durations:
+      // const DEFAULTS = {
+      //   WORK_DURATION: 15, // 15 seconds for testing
+      //   EXERCISE_DURATION: 10,   // 10 seconds per exercise for testing
+      //   MAX_EXERCISES: 2         // Fewer exercises for testing
+      // };
       
       // APP STATE
       const state = {
         // Timer state
         timerRemaining: DEFAULTS.WORK_DURATION,
         timerInterval: null,
+        timerIsPaused: false,
         
         // Exercise state
         currentExerciseIndex: 0,
@@ -1073,10 +1094,10 @@
         exerciseRemaining: 0,
         exerciseInterval: null,
         completedExercises: [],
+        isPaused: false,
         
         // UI state
         currentPage: 'landingPage',
-        isFocusMode: false,
         isAudioReady: false,
         isVibrationSupported: 'vibrate' in navigator,
         hapticEnabled: true,
@@ -1231,6 +1252,16 @@
           if (targetPage) {
             targetPage.classList.add('active');
           }
+          
+          // Add landing-active class to body when on landing page, remove otherwise
+          if (pageId === 'landingPage') {
+            document.body.classList.add('landing-active');
+          } else {
+            document.body.classList.remove('landing-active');
+          }
+          
+          // Update button visibility based on current page
+          updateButtonVisibility(pageId);
         },
         
         /**
@@ -1293,6 +1324,42 @@
         }
       };
       
+      // Function to update button visibility based on the current page
+      function updateButtonVisibility(pageId) {
+        // Hide all buttons first
+        const landingButtons = document.querySelectorAll('.landing-button');
+        const timerButtons = document.querySelectorAll('.timer-button');
+        const exerciseButtons = document.querySelectorAll('.exercise-button');
+        const finishButtons = document.querySelectorAll('.finish-button');
+        
+        landingButtons.forEach(btn => btn.style.display = 'none');
+        timerButtons.forEach(btn => btn.style.display = 'none');
+        exerciseButtons.forEach(btn => btn.style.display = 'none');
+        finishButtons.forEach(btn => btn.style.display = 'none');
+        
+        // Hide progress containers
+        state.elements.timerProgressContainer.style.display = 'none';
+        state.elements.exerciseProgressContainer.style.display = 'none';
+        
+        // Show relevant buttons based on current page
+        switch(pageId) {
+          case 'landingPage':
+            landingButtons.forEach(btn => btn.style.display = 'block');
+            break;
+          case 'timerSection':
+            timerButtons.forEach(btn => btn.style.display = 'block');
+            state.elements.timerProgressContainer.style.display = 'block';
+            break;
+          case 'exerciseSection':
+            exerciseButtons.forEach(btn => btn.style.display = 'block');
+            state.elements.exerciseProgressContainer.style.display = 'block';
+            break;
+          case 'finishSection':
+            finishButtons.forEach(btn => btn.style.display = 'block');
+            break;
+        }
+      }
+      
       // EVENT HANDLERS
       const handlers = {
         startApp: () => {
@@ -1301,14 +1368,111 @@
           utils.showToast('Timer started. Get focused!');
         },
         
-        skipTimer: () => {
-          clearInterval(state.timerInterval);
-          goToExercises();
-          utils.showToast('Starting exercises now');
+        openLearnMore: () => {
+          handlers.showKnowledgeSection();
+        },
+        
+        pauseTimer: () => {
+          if (state.timerIsPaused) {
+            // Resume the timer
+            state.timerIsPaused = false;
+            state.elements.pauseTimerButton.textContent = 'Pause';
+            
+            // Start new interval
+            state.timerInterval = setInterval(() => {
+              state.timerRemaining--;
+              updateTimerDisplay();
+              
+              // Update progress bar
+              const percentRemaining = (state.timerRemaining / DEFAULTS.WORK_DURATION) * 100;
+              state.elements.timerProgress.style.width = percentRemaining + "%";
+              
+              // Play a tick sound every minute (or when 1 minute remains)
+              if (state.timerRemaining > 0 && 
+                  (state.timerRemaining % 60 === 0 || state.timerRemaining === 60)) {
+                utils.playAudio('timer');
+              }
+              
+              if (state.timerRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                utils.playAudio('complete');
+                utils.triggerHaptic(HAPTIC_PATTERNS.timerComplete);
+                goToExercises();
+              }
+            }, 1000);
+            
+            utils.showToast('Timer resumed');
+          } else {
+            // Pause the timer
+            clearInterval(state.timerInterval);
+            state.timerIsPaused = true;
+            state.elements.pauseTimerButton.textContent = 'Resume';
+            utils.showToast('Timer paused');
+          }
+        },
+        
+        startTimer: () => {
+          if (state.timerIsPaused) {
+            handlers.pauseTimer(); // This will resume the timer
+          } else {
+            // If not paused, this acts like a skip button
+            clearInterval(state.timerInterval);
+            goToExercises();
+            utils.showToast('Starting exercises now');
+          }
+        },
+        
+        pauseExercise: () => {
+          if (state.isPaused) {
+            // Resume the exercise
+            state.isPaused = false;
+            state.elements.pauseExerciseButton.textContent = 'Pause';
+            
+            // Start new interval
+            state.exerciseInterval = setInterval(() => {
+              state.exerciseRemaining--;
+              updateExerciseTimer();
+              
+              // Update progress bar
+              const percentRemaining = (state.exerciseRemaining / DEFAULTS.EXERCISE_DURATION) * 100;
+              state.elements.exerciseProgress.style.width = percentRemaining + "%";
+              
+              if (state.exerciseRemaining <= 0) {
+                clearInterval(state.exerciseInterval);
+                
+                // Play completion sound
+                utils.playAudio('complete');
+                utils.triggerHaptic(HAPTIC_PATTERNS.exerciseComplete);
+                
+                // Mark as done + add to completed
+                const current = state.exerciseSegments[state.currentExerciseIndex];
+                current.status = "done";
+                state.completedExercises.push({
+                  name: current.name,
+                  side: current.side,
+                  description: current.description,
+                  tag: "nothing"
+                });
+                
+                // Move to next exercise
+                state.currentExerciseIndex++;
+                startExerciseSegment();
+              }
+            }, 1000);
+            
+            utils.showToast('Exercise resumed');
+          } else {
+            // Pause the exercise
+            clearInterval(state.exerciseInterval);
+            state.isPaused = true;
+            state.elements.pauseExerciseButton.textContent = 'Resume';
+            utils.showToast('Exercise paused');
+          }
         },
         
         skipExercise: () => {
           clearInterval(state.exerciseInterval);
+          state.isPaused = false;
           
           const current = state.exerciseSegments[state.currentExerciseIndex];
           current.status = "done";
@@ -1371,15 +1535,6 @@
           
           // Also update the stored tag
           state.completedExercises[idx].tag = nextTag;
-        },
-        
-        toggleFocusMode: () => {
-          state.isFocusMode = !state.isFocusMode;
-          document.body.classList.toggle('focus-mode', state.isFocusMode);
-          state.elements.focusButton.textContent = state.isFocusMode ? 'Exit Focus' : 'Focus';
-          utils.setAriaState(state.elements.focusButton, 'aria-pressed', state.isFocusMode);
-          
-          utils.showToast(state.isFocusMode ? 'Focus mode enabled' : 'Focus mode disabled');
         },
         
         showKnowledgeSection: () => {
@@ -1471,24 +1626,27 @@
           
           // Buttons
           startButton: document.getElementById('startButton'),
-          skipTimerButton: document.getElementById('skipTimerButton'),
-          nextExerciseButton: document.getElementById('nextExerciseButton'),
+          learnMoreButton: document.getElementById('learnMoreButton'),
+          pauseTimerButton: document.getElementById('pauseTimerButton'),
+          startTimerButton: document.getElementById('startTimerButton'),
+          pauseExerciseButton: document.getElementById('pauseExerciseButton'),
+          skipExerciseButton: document.getElementById('skipExerciseButton'),
           restartButton: document.getElementById('restartButton'),
-          focusButton: document.getElementById('focusButton'),
-          infoButton: document.getElementById('infoButton'),
           backButton: document.getElementById('backButton'),
-          installButton: document.getElementById('installButton'),
           
           // Timer elements
-          timerCountdown: document.getElementById('timerCountdown'),
+          timerProgressContainer: document.getElementById('timerProgressContainer'),
           timerProgress: document.getElementById('timerProgress'),
+          timerRemaining: document.getElementById('timerRemaining'),
           
           // Exercise elements
           exerciseImage: document.getElementById('exerciseImage'),
           exerciseTitle: document.getElementById('exerciseTitle'),
           exerciseSubtitle: document.getElementById('exerciseSubtitle'),
           exerciseTimer: document.getElementById('exerciseTimer'),
+          exerciseProgressContainer: document.getElementById('exerciseProgressContainer'),
           exerciseProgress: document.getElementById('exerciseProgress'),
+          exerciseRemaining: document.getElementById('exerciseRemaining'),
           
           // Finish elements
           doneList: document.getElementById('doneList'),
@@ -1669,48 +1827,9 @@
             // Show app content with fade in
             state.elements.appContainer.style.opacity = '1';
             
-            // Show iOS install instructions if appropriate
-            showIOSInstallInstructions();
+            // Add landing-active class to body initially
+            document.body.classList.add('landing-active');
           }, 500);
-        }
-      }
-      
-      function showIOSInstallInstructions() {
-        // Only show for iOS Safari
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        
-        // Check if already installed as PWA
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                          window.navigator.standalone;
-        
-        if (isIOS && isSafari && !isStandalone) {
-          // Check if we've shown the tip recently
-          const lastDismissed = localStorage.getItem('ios-install-tip-dismissed');
-          const dayInMs = 24 * 60 * 60 * 1000;
-          
-          // Only show once per day
-          if (!lastDismissed || (Date.now() - parseInt(lastDismissed)) > dayInMs) {
-            // Create installation tip
-            const installTip = document.createElement('div');
-            installTip.className = 'ios-install-tip';
-            installTip.innerHTML = `
-              <div class="tip-content">
-                <p>Install this app on your iPhone: tap <strong>Share</strong> <span class="share-icon">↑</span> then <strong>Add to Home Screen</strong></p>
-                <button class="close-tip">×</button>
-              </div>
-            `;
-            
-            document.body.appendChild(installTip);
-            
-            // Handle close button
-            installTip.querySelector('.close-tip').addEventListener('click', () => {
-              installTip.style.display = 'none';
-              
-              // Store in localStorage to prevent showing again too soon
-              localStorage.setItem('ios-install-tip-dismissed', Date.now());
-            });
-          }
         }
       }
       
@@ -1721,15 +1840,12 @@
         
         // Main navigation buttons
         state.elements.startButton.addEventListener('click', handlers.startApp);
-        state.elements.skipTimerButton.addEventListener('click', handlers.skipTimer);
-        state.elements.nextExerciseButton.addEventListener('click', handlers.skipExercise);
+        state.elements.learnMoreButton.addEventListener('click', handlers.openLearnMore);
+        state.elements.pauseTimerButton.addEventListener('click', handlers.pauseTimer);
+        state.elements.startTimerButton.addEventListener('click', handlers.startTimer);
+        state.elements.pauseExerciseButton.addEventListener('click', handlers.pauseExercise);
+        state.elements.skipExerciseButton.addEventListener('click', handlers.skipExercise);
         state.elements.restartButton.addEventListener('click', handlers.finishAndRestart);
-        
-        // Focus mode toggle
-        state.elements.focusButton.addEventListener('click', handlers.toggleFocusMode);
-        
-        // Info button
-        state.elements.infoButton.addEventListener('click', handlers.showKnowledgeSection);
         
         // Back button in knowledge section
         state.elements.backButton.addEventListener('click', handlers.hideKnowledgeSection);
@@ -1741,11 +1857,6 @@
         
         // Tab visibility changes
         document.addEventListener('visibilitychange', handlers.handleVisibilityChange);
-        
-        // Install button event
-        if (state.elements.installButton) {
-          state.elements.installButton.addEventListener('click', handleInstallClick);
-        }
         
         // Escape key closes panels
         document.addEventListener('keydown', (e) => {
@@ -1759,14 +1870,24 @@
       
       // TIMER FUNCTIONS
       function startTimer() {
+        // Reset timer state
         state.timerRemaining = DEFAULTS.WORK_DURATION;
         updateTimerDisplay();
         
+        // Reset and show progress bar
         const progressBar = state.elements.timerProgress;
         progressBar.style.width = "100%";
         
+        // Clear any existing interval
         clearInterval(state.timerInterval);
         
+        // Reset pause state
+        state.timerIsPaused = false;
+        if (state.elements.pauseTimerButton) {
+          state.elements.pauseTimerButton.textContent = 'Pause';
+        }
+        
+        // Start new interval
         state.timerInterval = setInterval(() => {
           state.timerRemaining--;
           updateTimerDisplay();
@@ -1791,7 +1912,8 @@
       }
       
       function updateTimerDisplay() {
-        state.elements.timerCountdown.textContent = utils.formatTime(state.timerRemaining);
+        const formattedTime = utils.formatTime(state.timerRemaining);
+        state.elements.timerRemaining.textContent = formattedTime;
       }
       
       // EXERCISE FUNCTIONS
@@ -1805,6 +1927,7 @@
         // Reset state
         state.currentExerciseIndex = 0;
         state.completedExercises = [];
+        state.isPaused = false;
         
         // Start the first exercise
         startExerciseSegment();
@@ -1857,6 +1980,14 @@
       }
       
       function startExerciseSegment() {
+        // Reset pause state
+        state.isPaused = false;
+        
+        // Update pause button text
+        if (state.elements.pauseExerciseButton) {
+          state.elements.pauseExerciseButton.textContent = 'Pause';
+        }
+        
         // Check if we've completed all exercises
         if (state.currentExerciseIndex >= state.exerciseSegments.length) {
           finishExercises();
@@ -1930,7 +2061,9 @@
       }
       
       function updateExerciseTimer() {
-        state.elements.exerciseTimer.textContent = utils.formatTime(state.exerciseRemaining);
+        const formattedTime = utils.formatTime(state.exerciseRemaining);
+        state.elements.exerciseTimer.textContent = formattedTime;
+        state.elements.exerciseRemaining.textContent = formattedTime;
       }
       
       function finishExercises() {
@@ -1965,56 +2098,6 @@
         });
       }
       
-      // PWA INSTALLATION FUNCTIONALITY
-      let deferredPrompt;
-      
-      // Handle the beforeinstallprompt event
-      window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent the default browser prompt
-        e.preventDefault();
-        // Store the event for later use
-        deferredPrompt = e;
-        // Show the install button
-        if (state.elements.installButton) {
-          state.elements.installButton.style.display = 'block';
-        }
-      });
-      
-      // Handle the install button click
-      function handleInstallClick() {
-        if (!deferredPrompt) return;
-        
-        // Show the install prompt
-        deferredPrompt.prompt();
-        
-        // Wait for the user to respond
-        deferredPrompt.userChoice.then((choiceResult) => {
-          // Reset the deferred prompt variable
-          deferredPrompt = null;
-          
-          // Hide the install button
-          if (state.elements.installButton) {
-            state.elements.installButton.style.display = 'none';
-          }
-          
-          // If installed, show a toast
-          if (choiceResult.outcome === 'accepted') {
-            utils.showToast('App installed successfully!');
-          }
-        });
-      }
-      
-      // Handle the appinstalled event
-      window.addEventListener('appinstalled', (e) => {
-        // Hide the install button
-        if (state.elements.installButton) {
-          state.elements.installButton.style.display = 'none';
-        }
-        
-        // Show a toast
-        utils.showToast('App installed successfully!');
-      });
-      
       // INITIALIZATION
       function init() {
         cacheElements();
@@ -2023,30 +2106,7 @@
         attachEventListeners();
         
         // Set initial ARIA states
-        utils.setAriaState(state.elements.focusButton, 'aria-pressed', false);
-        
-        // Hide the install button initially (will show when ready)
-        if (state.elements.installButton) {
-          state.elements.installButton.style.display = 'none';
-        }
-        
-        // Register service worker for offline support if available
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            // Adjust path based on environment
-            const swPath = location.hostname === 'localhost' ? 
-              '/service-worker.js' : 
-              '/hagius-active/service-worker.js';
-              
-            navigator.serviceWorker.register(swPath)
-              .then(registration => {
-                console.log('ServiceWorker registered with scope:', registration.scope);
-              })
-              .catch(error => {
-                console.log('ServiceWorker registration failed:', error);
-              });
-          });
-        }
+        utils.setAriaState(state.elements.backButton, 'aria-expanded', false);
       }
       
       // Initialize the app when DOM is ready
