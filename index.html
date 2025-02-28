@@ -2,181 +2,408 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HAGIUS - Active Journey</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Hagius Active Journey - Movement breaks for better workplace health and productivity" />
+  <title>Hagius Active Journey</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#214B7A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hagius Active Journey">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
+  <!-- iOS splash screen images -->
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-2048-2732.jpg" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-1668-2388.jpg" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-1536-2048.jpg" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-1125-2436.jpg" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-1242-2688.jpg" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-828-1792.jpg" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-750-1334.jpg" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="icons/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  
   <style>
-    /* RESET & BASE STYLES */
+    /* Reset & Base */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    html, body {
-      height: 100%;
+    
+    :root {
+      --primary-color: #214B7A;
+      --secondary-color: #F28E47;
+      --white-transparent-light: rgba(255, 255, 255, 0.2);
+      --white-transparent-medium: rgba(255, 255, 255, 0.3);
+      --white-transparent-bright: rgba(255, 255, 255, 0.4);
+      --white-transparent-brighter: rgba(255, 255, 255, 0.5);
+      --border-radius: 0px;
+      --transition-speed: 0.3s;
+      --safe-bottom: calc(20px + env(safe-area-inset-bottom));
+      --safe-top: calc(20px + env(safe-area-inset-top));
+      --button-spacing: 4px; /* Consistent spacing throughout the app */
+      --element-height: 60px;
+      --font-size-button: 0.4; /* Standardized font size for all UI elements */
+      --font-size-header: 2.4rem;
+      --element-padding: 15px;
+      --min-button-width: 120px; /* Minimum width for buttons before wrapping */
     }
+    
+    html {
+      height: 100vh; /* Use viewport height */
+      overflow: hidden; /* Prevent scrolling */
+    }
+    
     body {
-      font-family: "Helvetica", sans-serif;
-      font-weight: 700; /* bold */
-      background-color: #fff;
-      color: #000;
+      font-family: Helvetica, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-weight: bold;
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100vh;
+      width: 100%;
+      margin: 0;
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      overflow: hidden;
+      touch-action: manipulation; /* Optimize for touch to reduce delay */
+    }
+    
+    /* Loading Animation */
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+      flex-direction: column;
+    }
+    
+    .loading-logo {
+      margin-bottom: 20px;
+    }
+    
+    .loading-progress {
+      width: 200px;
+      height: 4px;
+      background: var(--white-transparent-light);
+      margin-top: 20px;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+    
+    .loading-bar {
+      height: 100%;
+      width: 0%;
+      background: white;
+      transition: width 0.3s ease;
+    }
+    
+    .loader-text {
+      text-align: center;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
+      margin-top: 20px;
+      text-transform: uppercase;
+    }
+    
+    /* Hide content until loaded */
+    .app-container {
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding-top: 15px;
+      z-index: 9000;
+      pointer-events: none;
     }
-
-    a, button {
-      cursor: pointer;
-    }
-    h1, h2, h3 {
-      margin-bottom: 0.5rem;
-      text-transform: uppercase; /* capitalized headers */
-    }
-    p {
-      margin-bottom: 1rem;
-      line-height: 1.4;
-      font-weight: 400; /* paragraphs slightly less bold */
-    }
-    .hidden {
-      display: none !important; /* ensure absolutely hidden */
-    }
-
-    /* TOP NAV */
-    #topNav {
-      width: 100%;
+    
+    .toast {
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 30px;
+      margin-bottom: 10px;
+      max-width: 80%;
       text-align: center;
-      border-bottom: 3px solid #000;
-      padding: 1rem;
-      font-size: 1.4rem;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.3s, transform 0.3s;
     }
-
-    /* PAGE WRAPPER */
+    
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Header */
+    .header {
+      position: fixed;
+      top: 10%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 10;
+      transition: opacity 0.3s ease;
+    }
+    
+    .focus-mode .header {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .logo {
+      max-width: 180px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    
+    /* Main Container */
     .page {
+      position: fixed;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 100%;
       max-width: 700px;
-      margin: 2rem auto;
       text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 0 20px;
     }
-
-    /* LANDING PAGE (DEFAULT VISIBLE) */
+    
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .focus-mode .page {
+      opacity: 0.7;
+    }
+    
+    /* Landing Page */
     #landingPage h1 {
-      font-size: 2rem;
+      font-size: var(--font-size-header);
       margin-bottom: 1.5rem;
       letter-spacing: 1px;
+      text-transform: uppercase;
     }
+    
     #landingPage p {
       font-size: 1.2rem;
       max-width: 500px;
       margin: 0 auto 2rem auto;
+      opacity: 0.9;
     }
+    
     .start-btn {
-      padding: 1rem 2rem;
-      background: #000;
+      background: var(--white-transparent-light);
+      border: none;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
       color: #fff;
-      border: 2px solid #000;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      height: var(--element-height);
+      line-height: var(--element-height);
+      padding: 0 var(--element-padding);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin: 0 auto;
+      min-width: 200px;
+      -webkit-tap-highlight-color: transparent;
     }
+    
     .start-btn:hover {
-      background-color: #333;
+      background: var(--white-transparent-bright);
     }
-
-    /* TIMER SECTION */
+    
+    /* Timer Section */
     #timerSection h2 {
       font-size: 1.6rem;
       margin-bottom: 1rem;
       letter-spacing: 1px;
+      text-transform: uppercase;
     }
+    
     #timerCountdown {
       font-size: 3rem;
       margin: 1.5rem 0;
+      font-weight: bold;
     }
+    
     .timer-progress-container {
       width: 100%;
-      background-color: #eee;
-      height: 12px;
-      border: 2px solid #000;
+      height: var(--element-height);
+      background: var(--white-transparent-light);
+      overflow: hidden;
       margin-bottom: 1.5rem;
+      position: relative;
     }
+    
     .timer-progress-bar {
       height: 100%;
-      background-color: #000;
+      background: var(--white-transparent-brighter);
       width: 100%;
       transition: width 1s linear;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      will-change: width;
     }
+    
     .skip-btn {
-      padding: 1rem 2rem;
-      background: #000;
+      background: var(--white-transparent-light);
+      border: none;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
       color: #fff;
-      border: 2px solid #000;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      height: var(--element-height);
+      line-height: var(--element-height);
+      padding: 0 var(--element-padding);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin: 0 auto;
+      min-width: 200px;
+      -webkit-tap-highlight-color: transparent;
     }
+    
     .skip-btn:hover {
-      background-color: #333;
+      background: var(--white-transparent-bright);
     }
-
-    /* EXERCISE SECTION */
+    
+    /* Exercise Section */
     #exerciseSection {
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      max-width: 700px;
     }
+    
+    .exercise-display {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      background: var(--white-transparent-light);
+      border-radius: 50%;
+      margin: 0 auto 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
     #exerciseImage {
       width: 100%;
-      max-width: 300px;
-      aspect-ratio: 3 / 4;
+      height: 100%;
       object-fit: cover;
-      margin: 0 auto 1rem auto;
     }
+    
     #exerciseTitle {
       margin-bottom: 0.5rem;
       letter-spacing: 1px;
       font-size: 1.6rem;
+      text-transform: uppercase;
     }
+    
     #exerciseSubtitle {
       font-size: 1rem;
       margin-bottom: 1rem;
+      opacity: 0.9;
     }
+    
     #exerciseTimer {
       font-size: 2rem;
       margin: 1rem 0;
     }
+    
     .exercise-progress-container {
       width: 100%;
-      background-color: #eee;
-      height: 12px;
-      border: 2px solid #000;
+      height: var(--element-height);
+      background: var(--white-transparent-light);
+      overflow: hidden;
       margin-bottom: 1.5rem;
+      position: relative;
     }
+    
     .exercise-progress-bar {
       height: 100%;
-      background-color: #000;
+      background: var(--white-transparent-brighter);
       width: 100%;
       transition: width 1s linear;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      will-change: width;
     }
+    
     .next-ex-btn {
-      padding: 1rem 2rem;
-      background: #000;
+      background: var(--white-transparent-light);
+      border: none;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
       color: #fff;
-      border: 2px solid #000;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      height: var(--element-height);
+      line-height: var(--element-height);
+      padding: 0 var(--element-padding);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin: 0 auto;
+      min-width: 200px;
+      -webkit-tap-highlight-color: transparent;
     }
+    
     .next-ex-btn:hover {
-      background-color: #333;
+      background: var(--white-transparent-bright);
     }
-
-    /* FINISH SECTION */
+    
+    /* Finish Section */
     #finishSection h2 {
       margin-bottom: 1rem;
       letter-spacing: 1px;
       font-size: 1.8rem;
+      text-transform: uppercase;
     }
+    
     #finishSection p {
       font-size: 1.2rem;
       max-width: 500px;
       margin: 0 auto 2rem auto;
+      opacity: 0.9;
     }
+    
     .done-list {
       list-style: none;
       padding: 0;
@@ -184,401 +411,1651 @@
       margin: 0 auto 2rem auto;
       max-width: 600px;
     }
+    
     .done-list li {
-      border: 2px solid #000;
-      background-color: #fff;
-      padding: 1rem;
-      margin-bottom: 0.5rem;
+      background: var(--white-transparent-light);
+      padding: 0 var(--element-padding);
+      margin-bottom: var(--button-spacing);
       font-size: 1.1rem;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s ease;
+      height: var(--element-height);
+      line-height: var(--element-height);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+    
     .done-list li[data-tag="more"] {
-      background-color: #d1e7dd;
+      background: rgba(115, 215, 170, 0.3);
     }
+    
     .done-list li[data-tag="less"] {
-      background-color: #f8d7da;
+      background: rgba(250, 128, 114, 0.3);
     }
+    
     .restart-btn {
-      padding: 1rem 2rem;
-      background: #000;
+      background: var(--white-transparent-light);
+      border: none;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
       color: #fff;
-      border: 2px solid #000;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      height: var(--element-height);
+      line-height: var(--element-height);
+      padding: 0 var(--element-padding);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin: 0 auto;
+      min-width: 200px;
+      -webkit-tap-highlight-color: transparent;
     }
+    
     .restart-btn:hover {
-      background-color: #333;
+      background: var(--white-transparent-bright);
+    }
+    
+    /* Completion Modal */
+    .completion-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .completion-modal.visible {
+      opacity: 1;
+    }
+    
+    .modal-content {
+      background: var(--white-transparent-light);
+      padding: 30px;
+      max-width: 90%;
+      width: 350px;
+      text-align: center;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .completion-modal.visible .modal-content {
+      transform: translateY(0);
+    }
+    
+    .modal-content h2 {
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+    }
+    
+    .modal-content p {
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    
+    .modal-content button {
+      background: var(--white-transparent-medium);
+      border: none;
+      padding: 0 var(--element-padding);
+      color: white;
+      font-weight: bold;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      width: 100%;
+      height: var(--element-height);
+      line-height: var(--element-height);
+      cursor: pointer;
+      transition: background 0.2s ease;
+      text-transform: uppercase;
+    }
+    
+    .modal-content button:hover {
+      background: var(--white-transparent-bright);
+    }
+    
+    /* Focus Button Container */
+    .focus-button-container {
+      position: fixed;
+      bottom: env(safe-area-inset-bottom);
+      left: 0;
+      right: 0;
+      display: flex;
+      z-index: 10;
+      padding: 0;
+      gap: var(--button-spacing);
+    }
+    
+    .focus-button {
+      background: var(--white-transparent-light);
+      border: none;
+      flex: 1;
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      height: var(--element-height);
+      line-height: var(--element-height);
+      padding: 0 var(--element-padding);
+      text-transform: uppercase;
+      margin: 0;
+      min-width: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .focus-button:hover {
+      background: var(--white-transparent-bright);
+    }
+    
+    /* Knowledge Section */
+    #knowledgeSection {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      z-index: 100;
+      overflow-y: auto;
+      padding: var(--safe-top) 0 calc(70px + env(safe-area-inset-bottom)) 0;
+    }
+    
+    .knowledge-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+    
+    .knowledge-header .logo {
+      margin-bottom: 15px;
+    }
+    
+    .knowledge-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .knowledge-nav {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-bottom: var(--button-spacing);
+      padding: 0;
+      gap: var(--button-spacing);
+    }
+    
+    .knowledge-nav button {
+      background: var(--white-transparent-light);
+      border: none;
+      padding: 0 var(--element-padding);
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      flex: 1 1 calc(33.333% - var(--button-spacing) * 2/3);
+      min-width: 0;
+      margin: 0;
+      height: var(--element-height);
+      line-height: var(--element-height);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    @media (max-width: 480px) {
+      .knowledge-nav button {
+        flex: 1 1 calc(50% - var(--button-spacing) * 1/2);
+      }
+    }
+    
+    .knowledge-nav button:hover, 
+    .knowledge-nav button.active {
+      background: var(--white-transparent-bright);
+    }
+    
+    .knowledge-content {
+      background: var(--white-transparent-light);
+      padding: 20px;
+      margin: 0;
+      width: 100%;
+    }
+    
+    .technique-info {
+      display: none;
+    }
+    
+    .technique-info.active {
+      display: block;
+    }
+    
+    .technique-info h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    
+    .technique-info h3 {
+      font-size: 1.3rem;
+      margin: 20px 0 10px;
+      text-transform: uppercase;
+    }
+    
+    .technique-info p, 
+    .technique-info ul, 
+    .technique-info ol {
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    
+    .technique-info ul, 
+    .technique-info ol {
+      padding-left: 25px;
+    }
+    
+    .back-button {
+      position: fixed;
+      top: var(--safe-top);
+      left: 0;
+      background: var(--white-transparent-light);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0 var(--element-padding);
+      font-size: calc(var(--element-height) * var(--font-size-button));
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+      z-index: 110;
+      height: var(--element-height);
+      line-height: var(--element-height);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase;
+    }
+    
+    .back-button:hover {
+      background: var(--white-transparent-bright);
+    }
+    
+    /* PWA Install Button */
+    #installButton {
+      display: none;
+      background: var(--white-transparent-medium);
+    }
+    
+    #installButton:hover {
+      background: var(--white-transparent-bright);
+    }
+    
+    /* iOS PWA Installation Tip */
+    .ios-install-tip {
+      position: fixed;
+      bottom: calc(var(--element-height) + env(safe-area-inset-bottom) + 10px);
+      left: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 9999;
+      animation: slide-up 0.3s ease;
+    }
+      
+    .tip-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+      
+    .ios-install-tip p {
+      margin: 0;
+      flex: 1;
+    }
+      
+    .share-icon {
+      display: inline-block;
+      box-sizing: border-box;
+      width: 18px;
+      height: 18px;
+      text-align: center;
+      font-weight: bold;
+      line-height: 18px;
+      border: 1px solid white;
+      border-radius: 4px;
+      margin: 0 3px;
+    }
+      
+    .close-tip {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+      
+    @keyframes slide-up {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    /* Responsive Design */
+    @media (min-width: 768px) {
+      :root {
+        --element-height: 70px;
+        --font-size-button: 0.4;
+        --font-size-header: 3rem;
+        --element-padding: 18px;
+        --min-button-width: 140px;
+      }
+      .exercise-display { width: 350px; height: 350px; }
+      .logo { max-width: 240px; }
+    }
+    
+    @media (max-width: 480px) {
+      :root {
+        --element-height: 50px;
+        --font-size-button: 0.4;
+        --element-padding: 12px;
+      }
+      .exercise-display { width: 220px; height: 220px; }
+    }
+    
+    /* Screen Reader Only */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    /* Fix for iPhone PWA in standalone mode */
+    @media all and (display-mode: standalone) {
+      html, body {
+        height: 100vh !important;
+        width: 100vw !important;
+        overflow: hidden !important;
+      }
+      
+      .app-container {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+      }
+      
+      .focus-button-container {
+        bottom: 0 !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+      }
+    }
+
+    /* Apply to prevent any potential iOS-specific rendering issues */
+    @supports (-webkit-touch-callout: none) {
+      body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- TOP NAV -->
-  <div id="topNav">HAGIUS</div>
-
-  <!-- LANDING PAGE -->
-  <div id="landingPage" class="page">
-    <h1>Your Active Journey Starts Now</h1>
-    <p>
-      A short break every 45 minutes can transform your day.
-      Move with purpose, and keep your body and mind in balance.
-    </p>
-    <button class="start-btn" onclick="showTimer()">Start</button>
-  </div>
-
-  <!-- TIMER SECTION (hidden by default) -->
-  <div id="timerSection" class="page hidden">
-    <h2>Next Session Starts In</h2>
-    <div id="timerCountdown">45:00</div>
-    <div class="timer-progress-container">
-      <div class="timer-progress-bar" id="timerProgress"></div>
+  <!-- Loading Animation -->
+  <div id="loadingContainer" class="loading-container">
+    <div>
+      <img src="monogram.png" alt="Hagius" class="logo loading-logo">
+      <div class="loader-text">Loading Active Journey...</div>
+      <div class="loading-progress">
+        <div id="loadingBar" class="loading-bar"></div>
+      </div>
     </div>
-    <button class="skip-btn" onclick="skipTimer()">Skip</button>
   </div>
 
-  <!-- EXERCISE SECTION (hidden by default) -->
-  <div id="exerciseSection" class="page hidden">
-    <img id="exerciseImage" src="" alt="Exercise Image" />
-    <h2 id="exerciseTitle">Exercise Name</h2>
-    <p id="exerciseSubtitle">Exercise description</p>
+  <!-- Toast notification container -->
+  <div id="toastContainer" class="toast-container"></div>
 
-    <div class="exercise-progress-container">
-      <div class="exercise-progress-bar" id="exerciseProgress"></div>
+  <!-- App Container - hidden until loaded -->
+  <div id="appContainer" class="app-container">
+    <!-- Header fixed at the top -->
+    <div class="header">
+      <img src="logo.png" alt="Hagius" class="logo" id="mainLogo">
     </div>
-    <div id="exerciseTimer">01:00</div>
-
-    <button class="next-ex-btn" onclick="skipExercise()">Next Exercise</button>
+    
+    <!-- LANDING PAGE -->
+    <div id="landingPage" class="page active">
+      <h1>Your Active Journey Starts Now</h1>
+      <p>
+        A short break every 45 minutes can transform your day.
+        Move with purpose, and keep your body and mind in balance.
+      </p>
+      <button class="start-btn" id="startButton">Start</button>
+    </div>
+  
+    <!-- TIMER SECTION (hidden by default) -->
+    <div id="timerSection" class="page">
+      <h2>Next Movement Break In</h2>
+      <div id="timerCountdown">45:00</div>
+      <div class="timer-progress-container">
+        <div class="timer-progress-bar" id="timerProgress"></div>
+      </div>
+      <button class="skip-btn" id="skipTimerButton">Skip</button>
+    </div>
+  
+    <!-- EXERCISE SECTION (hidden by default) -->
+    <div id="exerciseSection" class="page">
+      <div class="exercise-display">
+        <img id="exerciseImage" src="" alt="Exercise Image">
+      </div>
+      <h2 id="exerciseTitle">Exercise Name</h2>
+      <p id="exerciseSubtitle">Exercise description</p>
+  
+      <div class="exercise-progress-container">
+        <div class="exercise-progress-bar" id="exerciseProgress"></div>
+      </div>
+      <div id="exerciseTimer">01:00</div>
+  
+      <button class="next-ex-btn" id="nextExerciseButton">Next Exercise</button>
+    </div>
+  
+    <!-- FINISH SECTION (hidden by default) -->
+    <div id="finishSection" class="page">
+      <h2>Well Done!</h2>
+      <p>
+        You've completed your exercise break.
+        Tap each exercise below to adjust its future frequency.
+      </p>
+      <ul id="doneList" class="done-list"></ul>
+      <button class="restart-btn" id="restartButton">Start Next 45-minute Timer</button>
+    </div>
+    
+    <!-- Knowledge Section (hidden by default) -->
+    <div id="knowledgeSection" aria-hidden="true">
+      <button class="back-button" id="backButton" aria-label="Back to main app">Back</button>
+      
+      <div class="knowledge-header">
+        <img src="logo.png" alt="Hagius" class="logo">
+        <p>Learn more about the benefits of regular movement breaks</p>
+      </div>
+      
+      <div class="knowledge-nav" role="tablist">
+        <button class="technique-btn active" data-technique="basics" role="tab" aria-selected="true" aria-controls="basics-info">Basics</button>
+        <button class="technique-btn" data-technique="desk" role="tab" aria-selected="false" aria-controls="desk-info">Desk Health</button>
+        <button class="technique-btn" data-technique="productivity" role="tab" aria-selected="false" aria-controls="productivity-info">Productivity</button>
+      </div>
+      
+      <div class="knowledge-content">
+        <!-- Basics Info -->
+        <div id="basics-info" class="technique-info active" role="tabpanel" aria-labelledby="basics-tab">
+          <h2>Movement Break Basics</h2>
+          
+          <p>Regular movement throughout your workday is essential for maintaining physical health, mental clarity, and overall wellbeing. Taking short, deliberate breaks to move your body can prevent many of the negative effects of prolonged sitting.</p>
+          
+          <h3>The Science of Movement</h3>
+          <p>Your body is designed to move regularly. Here's why movement breaks matter:</p>
+          <ul>
+            <li><strong>Circulation</strong> - Regular movement improves blood flow, delivering oxygen and nutrients throughout your body</li>
+            <li><strong>Muscle Activation</strong> - Brief exercises counteract the effects of static postures</li>
+            <li><strong>Joint Mobility</strong> - Movement helps maintain healthy joint function and prevents stiffness</li>
+            <li><strong>Brain Function</strong> - Physical activity increases blood flow to the brain, improving focus and creativity</li>
+          </ul>
+          
+          <h3>The 45-Minute Cycle</h3>
+          <p>Research suggests that working in focused blocks of around 45 minutes, followed by short breaks, optimizes both productivity and wellbeing. This cycle:</p>
+          <ul>
+            <li>Aligns with your body's natural energy rhythms</li>
+            <li>Prevents mental fatigue before it sets in</li>
+            <li>Reduces physical strain from prolonged static positions</li>
+            <li>Improves overall work quality and creative thinking</li>
+          </ul>
+          
+          <h3>Getting Started</h3>
+          <p>For beginners, here are some tips to incorporate movement breaks effectively:</p>
+          <ul>
+            <li>Start with just a few scheduled breaks per day</li>
+            <li>Set calendar reminders or use this app's timer</li>
+            <li>Choose exercises that counter your typical work posture</li>
+            <li>Focus on quality of movement rather than intensity</li>
+            <li>Be consistent - the benefits compound over time</li>
+          </ul>
+        </div>
+        
+        <!-- Desk Health Info -->
+        <div id="desk-info" class="technique-info" role="tabpanel" aria-labelledby="desk-tab">
+          <h2>Desk Health</h2>
+          
+          <p>Extended periods of sitting can lead to numerous health issues, often collectively referred to as "sitting disease." Regular movement breaks are a powerful antidote to these risks.</p>
+          
+          <h3>Common Desk-Related Issues</h3>
+          <ul>
+            <li><strong>Forward Head Posture</strong> - From looking at screens, causing neck strain</li>
+            <li><strong>Rounded Shoulders</strong> - From keyboard use and poor posture</li>
+            <li><strong>Lower Back Pain</strong> - From prolonged sitting and poor ergonomics</li>
+            <li><strong>Hip Tightness</strong> - From seated positions that shorten hip flexors</li>
+            <li><strong>Wrist/Hand Discomfort</strong> - From repetitive typing and mouse use</li>
+          </ul>
+          
+          <h3>Movement as Medicine</h3>
+          <p>Each exercise in your movement break targets specific areas affected by desk work:</p>
+          <ul>
+            <li><strong>Neck Tilts & Rotations</strong> - Release tension from looking at screens</li>
+            <li><strong>Shoulder Rolls</strong> - Combat rounded shoulders and upper back tightness</li>
+            <li><strong>Thoracic Extension</strong> - Counteract the forward slouch of desk work</li>
+            <li><strong>Hip Openers</strong> - Release tight hip flexors from prolonged sitting</li>
+            <li><strong>Balance Exercises</strong> - Reactivate stabilizing muscles that become dormant</li>
+          </ul>
+          
+          <h3>Beyond the Break</h3>
+          <p>Complement your movement breaks with these desk health strategies:</p>
+          <ul>
+            <li>Optimize your workstation ergonomics</li>
+            <li>Alternate between sitting and standing if possible</li>
+            <li>Take brief "micro-breaks" (30 seconds) every 20 minutes</li>
+            <li>Stay well hydrated throughout the day</li>
+            <li>Schedule walking meetings when possible</li>
+          </ul>
+        </div>
+        
+        <!-- Productivity Info -->
+        <div id="productivity-info" class="technique-info" role="tabpanel" aria-labelledby="productivity-tab">
+          <h2>Productivity Benefits</h2>
+          
+          <p>Movement breaks aren't just good for your body - they're proven to enhance cognitive function and work performance. Taking regular breaks can actually help you accomplish more in less time.</p>
+          
+          <h3>The Focus-Recovery Cycle</h3>
+          <p>Your brain works best when it alternates between periods of focused attention and recovery. The 45-minute work cycle with movement breaks optimizes this natural rhythm by:</p>
+          <ul>
+            <li>Preventing decision fatigue and mental exhaustion</li>
+            <li>Creating natural deadlines that increase work intensity</li>
+            <li>Providing psychological closure to work segments</li>
+            <li>Allowing your subconscious to process complex problems</li>
+          </ul>
+          
+          <h3>Cognitive Benefits</h3>
+          <p>Research has documented numerous cognitive improvements from regular movement breaks:</p>
+          <ul>
+            <li><strong>Improved Attention</strong> - Physical activity primes your brain's attention systems</li>
+            <li><strong>Enhanced Memory</strong> - Movement increases blood flow to memory-related brain regions</li>
+            <li><strong>Better Creative Thinking</strong> - Breaks from focused work activate different neural networks</li>
+            <li><strong>Reduced Mental Fatigue</strong> - Movement helps clear mental fog and restore energy</li>
+            <li><strong>Improved Mood</strong> - Physical activity releases mood-enhancing neurochemicals</li>
+          </ul>
+          
+          <h3>Implementation Strategies</h3>
+          <p>Maximize the productivity benefits of your movement breaks with these strategies:</p>
+          <ul>
+            <li>Schedule your most demanding tasks during your peak energy periods</li>
+            <li>Use movement breaks as transitions between different types of work</li>
+            <li>Set a clear intention for each work session before the timer starts</li>
+            <li>Briefly review what you accomplished at the end of each session</li>
+            <li>Consider journaling about insights that arise during movement breaks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Focus Button Container -->
+    <div class="focus-button-container" id="buttonContainer">
+      <button id="infoButton" class="focus-button" aria-haspopup="true" aria-expanded="false">Learn More</button>
+      <button id="focusButton" class="focus-button" aria-pressed="false">Focus</button>
+      <button id="installButton" class="focus-button">Install App</button>
+    </div>
   </div>
-
-  <!-- FINISH SECTION (hidden by default) -->
-  <div id="finishSection" class="page hidden">
-    <h2>Well Done!</h2>
-    <p>
-      You’ve completed your exercise break.
-      Now, tap each exercise below to adjust its future frequency:
-      <br>
-      <em>Cycle through "more" (2), "less" (0.5), or nothing (1).</em>
-    </p>
-    <ul id="doneList" class="done-list"></ul>
-    <button class="restart-btn" onclick="restartTimer()">Start Next 45-minute Timer</button>
-  </div>
-
+  
+  <!-- Audio Cues - Preload for faster response -->
+  <audio id="audioTimer" preload="auto"></audio>
+  <audio id="audioComplete" preload="auto"></audio>
+  <audio id="audioTransition" preload="auto"></audio>
+  
   <script>
-    /*************************************
-     * CONFIG & DATA
-     *************************************/
-    const REMINDER_DURATION = 45 * 60; // 45 min in seconds
-    // For testing, you can reduce:
-    // const REMINDER_DURATION = 15;
-
-    const EXERCISE_SEGMENT_DURATION = 60; // 1 minute each
-    let timerInterval, exerciseInterval;
-    let currentExerciseIndex = 0;
-    let exerciseSegments = [];
-    let completedExercises = [];
-
-    // Tag states: "nothing" (default), "more" (2), "less" (0.5)
-    const tagStates = ["nothing", "more", "less"];
-
-    // FULL EXERCISE POOL (8 total). We'll pick up to 5 segments each session.
-    const exercisesPool = [
-      {
-        name: "Single-Leg Balance w/ Toe Taps",
-        description: "Improve balance & ankle stability",
-        unilateral: true,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Standing Hip Circles",
-        description: "Loosen tight hips & improve joint mobility",
-        unilateral: false,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Neck Tilts & Rotations",
-        description: "Release neck tension from prolonged sitting",
-        unilateral: false,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Shoulder Rolls",
-        description: "Reduce shoulder stiffness & enhance posture",
-        unilateral: false,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Standing Figure-4 Stretch",
-        description: "Open up hips & glutes to counter desk posture",
-        unilateral: true,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Wall Angels",
-        description: "Promote better shoulder alignment & mobility",
-        unilateral: false,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Thoracic Extension",
-        description: "Relieve mid-back tightness & improve upright posture",
-        unilateral: false,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      },
-      {
-        name: "Standing Lateral Leg Raises",
-        description: "Strengthen hip abductors & improve balance",
-        unilateral: true,
-        image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
-        probability: 1
-      }
-    ];
-
-    /*************************************
-     * SHUFFLE
-     *************************************/
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    /*************************************
-     * Hide all pages
-     *************************************/
-    function hideAllPages() {
-      document.getElementById("landingPage").classList.add("hidden");
-      document.getElementById("timerSection").classList.add("hidden");
-      document.getElementById("exerciseSection").classList.add("hidden");
-      document.getElementById("finishSection").classList.add("hidden");
-    }
-
-    /*************************************
-     * LANDING → TIMER
-     *************************************/
-    function showTimer() {
-      hideAllPages();
-      document.getElementById("timerSection").classList.remove("hidden");
-      startTimer();
-    }
-
-    /*************************************
-     * TIMER
-     *************************************/
-    function startTimer() {
-      let remaining = REMINDER_DURATION;
-      updateTimerDisplay(remaining);
-
-      const progressBar = document.getElementById("timerProgress");
-      progressBar.style.width = "100%";
-
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        remaining--;
-        updateTimerDisplay(remaining);
-        progressBar.style.width = (remaining / REMINDER_DURATION * 100) + "%";
-
-        if (remaining <= 0) {
-          clearInterval(timerInterval);
-          goToExercises();
+    /**
+     * Hagius Active Journey App
+     * Optimized JavaScript with improved performance, error handling, and organization
+     */
+    
+    // Immediately-invoked function expression (IIFE) to encapsulate our code
+    (function() {
+      // CONSTANTS
+      const AUDIO_SOURCES = {
+        timer: 'sounds/timer-tick.mp3',
+        complete: 'sounds/exercise-complete.mp3',
+        transition: 'sounds/transition.mp3'
+      };
+      
+      // HAPTIC PATTERNS (milliseconds)
+      const HAPTIC_PATTERNS = {
+        timerComplete: [100, 50, 100],
+        exerciseStart: [50],
+        exerciseComplete: [200],
+        sessionComplete: [100, 100, 100, 100, 300]
+      };
+      
+      // Default config values
+      const DEFAULTS = {
+        WORK_DURATION: 45 * 60, // 45 minutes in seconds
+        EXERCISE_DURATION: 60,   // 1 minute per exercise
+        MAX_EXERCISES: 5         // Maximum exercises per session
+      };
+      
+      // For testing, you can use shorter durations:
+      // const WORK_DURATION = 15; // 15 seconds for testing
+      
+      // APP STATE
+      const state = {
+        // Timer state
+        timerRemaining: DEFAULTS.WORK_DURATION,
+        timerInterval: null,
+        
+        // Exercise state
+        currentExerciseIndex: 0,
+        exerciseSegments: [],
+        exerciseRemaining: 0,
+        exerciseInterval: null,
+        completedExercises: [],
+        
+        // UI state
+        currentPage: 'landingPage',
+        isFocusMode: false,
+        isAudioReady: false,
+        isVibrationSupported: 'vibrate' in navigator,
+        hapticEnabled: true,
+        isVisible: true,
+        elements: {},
+        loadedResources: {
+          audio: false,
+          dom: false,
+          images: false
+        },
+        hasInteracted: false
+      };
+      
+      // Exercise pool (8 total)
+      const exercisesPool = [
+        {
+          name: "Single-Leg Balance w/ Toe Taps",
+          description: "Improve balance & ankle stability",
+          unilateral: true,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Standing Hip Circles",
+          description: "Loosen tight hips & improve joint mobility",
+          unilateral: false,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Neck Tilts & Rotations",
+          description: "Release neck tension from prolonged sitting",
+          unilateral: false,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Shoulder Rolls",
+          description: "Reduce shoulder stiffness & enhance posture",
+          unilateral: false,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Standing Figure-4 Stretch",
+          description: "Open up hips & glutes to counter desk posture",
+          unilateral: true,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Wall Angels",
+          description: "Promote better shoulder alignment & mobility",
+          unilateral: false,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Thoracic Extension",
+          description: "Relieve mid-back tightness & improve upright posture",
+          unilateral: false,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
+        },
+        {
+          name: "Standing Lateral Leg Raises",
+          description: "Strengthen hip abductors & improve balance",
+          unilateral: true,
+          image: "https://furthermore-cdn.equinox.com/2016/10/long-weekend-workout-warmup/warmup01.gif",
+          probability: 1
         }
-      }, 1000);
-    }
-
-    function updateTimerDisplay(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      document.getElementById("timerCountdown").textContent =
-        (minutes < 10 ? "0" + minutes : minutes) + ":" +
-        (secs < 10 ? "0" + secs : secs);
-    }
-
-    function skipTimer() {
-      clearInterval(timerInterval);
-      goToExercises();
-    }
-
-    /*************************************
-     * GO TO EXERCISES
-     *************************************/
-    function goToExercises() {
-      hideAllPages();
-      document.getElementById("exerciseSection").classList.remove("hidden");
-
-      generateExerciseSegments();
-      currentExerciseIndex = 0;
-      completedExercises = [];
-      startExerciseSegment();
-    }
-
-    /*************************************
-     * GENERATE EXERCISE SEGMENTS (Up to 5)
-     *************************************/
-    function generateExerciseSegments() {
-      exerciseSegments = [];
-      let shuffled = shuffle([...exercisesPool]);
-      let totalSegments = 0;
-      for (let ex of shuffled) {
-        const needed = ex.unilateral ? 2 : 1;
-        if (totalSegments + needed <= 5) {
-          if (ex.unilateral) {
-            exerciseSegments.push({ ...ex, side: "Left", status: "upcoming" });
-            exerciseSegments.push({ ...ex, side: "Right", status: "upcoming" });
-          } else {
-            exerciseSegments.push({ ...ex, side: "", status: "upcoming" });
+      ];
+      
+      // UTILITY FUNCTIONS
+      const utils = {
+        /**
+         * Shows a toast notification
+         * @param {string} message - Message to display
+         * @param {number} duration - How long to show in ms
+         */
+        showToast: (message, duration = 3000) => {
+          const toast = document.createElement('div');
+          toast.className = 'toast';
+          toast.textContent = message;
+          
+          state.elements.toastContainer.appendChild(toast);
+          
+          // Force reflow to enable transition
+          void toast.offsetWidth;
+          toast.classList.add('visible');
+          
+          setTimeout(() => {
+            toast.classList.remove('visible');
+            setTimeout(() => {
+              toast.remove();
+            }, 300); // Match transition duration
+          }, duration);
+        },
+        
+        /**
+         * Format seconds into MM:SS display
+         * @param {number} seconds - Seconds to format
+         * @return {string} Formatted time string
+         */
+        formatTime: (seconds) => {
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.floor(seconds % 60);
+          return `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
+        },
+        
+        /**
+         * Helper to safely toggle aria attributes
+         * @param {HTMLElement} element - The element to modify
+         * @param {string} attribute - The aria attribute to toggle
+         * @param {boolean} value - The value to set
+         */
+        setAriaState: (element, attribute, value) => {
+          if (element) {
+            element.setAttribute(attribute, value.toString());
           }
-          totalSegments += needed;
+        },
+        
+        /**
+         * Shuffle array in place using Fisher-Yates algorithm
+         * @param {Array} array - Array to shuffle
+         * @return {Array} The shuffled array
+         */
+        shuffle: (array) => {
+          const newArray = [...array]; // Create a copy to avoid modifying original
+          for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+          }
+          return newArray;
+        },
+        
+        /**
+         * Show a specific page and hide others
+         * @param {string} pageId - ID of the page to show
+         */
+        showPage: (pageId) => {
+          // Update state
+          state.currentPage = pageId;
+          
+          // Hide all pages
+          document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+          });
+          
+          // Show target page
+          const targetPage = document.getElementById(pageId);
+          if (targetPage) {
+            targetPage.classList.add('active');
+          }
+        },
+        
+        /**
+         * Trigger haptic feedback if supported
+         * @param {Array|number} pattern - Vibration pattern
+         */
+        triggerHaptic: (pattern) => {
+          if (!state.isVibrationSupported || !state.hapticEnabled) return;
+          
+          try {
+            if (pattern && (typeof pattern === 'number' || pattern.length > 0)) {
+              const result = navigator.vibrate(pattern);
+              if (result === false) {
+                state.hapticEnabled = false;
+                console.warn('Vibration failed - disabled');
+              }
+            }
+          } catch (e) {
+            console.warn('Haptic feedback error:', e);
+            state.hapticEnabled = false;
+          }
+        },
+        
+        /**
+         * Play audio with error handling
+         * @param {string} audioType - Type of audio to play
+         */
+        playAudio: (audioType) => {
+          if (!state.isAudioReady || !state.hasInteracted) return;
+          
+          try {
+            let audioElement = null;
+            
+            switch(audioType) {
+              case 'timer':
+                audioElement = state.elements.audioTimer;
+                break;
+              case 'complete':
+                audioElement = state.elements.audioComplete;
+                break;
+              case 'transition':
+                audioElement = state.elements.audioTransition;
+                break;
+            }
+            
+            if (audioElement) {
+              audioElement.currentTime = 0;
+              
+              const playPromise = audioElement.play();
+              
+              if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                  console.warn('Audio playback prevented:', error);
+                });
+              }
+            }
+          } catch (e) {
+            console.error('Audio play error:', e);
+          }
         }
-        if (totalSegments === 5) break;
-      }
-    }
-
-    /*************************************
-     * START EXERCISE SEGMENT
-     *************************************/
-    function startExerciseSegment() {
-      if (currentExerciseIndex >= exerciseSegments.length) {
-        finishExercises();
-        return;
-      }
-      // Mark current as ongoing
-      exerciseSegments.forEach((seg, i) => {
-        if (i === currentExerciseIndex) {
-          seg.status = "ongoing";
-        } else if (seg.status !== "done") {
-          seg.status = "upcoming";
-        }
-      });
-
-      const current = exerciseSegments[currentExerciseIndex];
-      const fullName = current.name + (current.side ? ` (${current.side})` : "");
-      document.getElementById("exerciseImage").src = current.image;
-      document.getElementById("exerciseImage").alt = fullName;
-      document.getElementById("exerciseTitle").textContent = fullName;
-      document.getElementById("exerciseSubtitle").textContent = current.description;
-
-      let remaining = EXERCISE_SEGMENT_DURATION;
-      updateExerciseTimer(remaining);
-      const progressBar = document.getElementById("exerciseProgress");
-      progressBar.style.width = "100%";
-
-      clearInterval(exerciseInterval);
-      exerciseInterval = setInterval(() => {
-        remaining--;
-        updateExerciseTimer(remaining);
-        progressBar.style.width = (remaining / EXERCISE_SEGMENT_DURATION * 100) + "%";
-        if (remaining <= 0) {
-          clearInterval(exerciseInterval);
-          // Mark as done + add to completed
-          exerciseSegments[currentExerciseIndex].status = "done";
-          completedExercises.push({
+      };
+      
+      // EVENT HANDLERS
+      const handlers = {
+        startApp: () => {
+          utils.showPage('timerSection');
+          startTimer();
+          utils.showToast('Timer started. Get focused!');
+        },
+        
+        skipTimer: () => {
+          clearInterval(state.timerInterval);
+          goToExercises();
+          utils.showToast('Starting exercises now');
+        },
+        
+        skipExercise: () => {
+          clearInterval(state.exerciseInterval);
+          
+          const current = state.exerciseSegments[state.currentExerciseIndex];
+          current.status = "done";
+          state.completedExercises.push({
             name: current.name,
             side: current.side,
             description: current.description,
             tag: "nothing"
           });
-          currentExerciseIndex++;
+          
+          state.currentExerciseIndex++;
           startExerciseSegment();
+        },
+        
+        finishAndRestart: () => {
+          utils.showPage('timerSection');
+          startTimer();
+          utils.showToast('Great job! Starting next work session');
+        },
+        
+        cycleTag: (li) => {
+          const idx = parseInt(li.getAttribute('data-index'));
+          const currentTag = li.getAttribute('data-tag');
+          let nextTag;
+          
+          // Cycle through: "nothing" -> "more" -> "less" -> "nothing"
+          if (currentTag === "nothing") {
+            nextTag = "more";
+          } else if (currentTag === "more") {
+            nextTag = "less";
+          } else {
+            nextTag = "nothing";
+          }
+          
+          // Update element
+          li.setAttribute('data-tag', nextTag);
+          
+          // Update UI
+          const baseText = state.completedExercises[idx].name +
+            (state.completedExercises[idx].side ? ` (${state.completedExercises[idx].side})` : "");
+          
+          li.textContent = (nextTag !== "nothing")
+            ? `${baseText} [${nextTag.toUpperCase()}]`
+            : baseText;
+            
+          // Update probability in the pool
+          const poolItem = exercisesPool.find(e => e.name === state.completedExercises[idx].name);
+          if (poolItem) {
+            if (nextTag === "more") {
+              poolItem.probability = 2;
+              utils.showToast(`You'll see more of ${poolItem.name}`);
+            } else if (nextTag === "less") {
+              poolItem.probability = 0.5;
+              utils.showToast(`You'll see less of ${poolItem.name}`);
+            } else {
+              poolItem.probability = 1;
+              utils.showToast(`Default frequency for ${poolItem.name}`);
+            }
+          }
+          
+          // Also update the stored tag
+          state.completedExercises[idx].tag = nextTag;
+        },
+        
+        toggleFocusMode: () => {
+          state.isFocusMode = !state.isFocusMode;
+          document.body.classList.toggle('focus-mode', state.isFocusMode);
+          state.elements.focusButton.textContent = state.isFocusMode ? 'Exit Focus' : 'Focus';
+          utils.setAriaState(state.elements.focusButton, 'aria-pressed', state.isFocusMode);
+          
+          utils.showToast(state.isFocusMode ? 'Focus mode enabled' : 'Focus mode disabled');
+        },
+        
+        showKnowledgeSection: () => {
+          state.elements.knowledgeSection.style.display = 'block';
+          state.elements.knowledgeSection.setAttribute('aria-hidden', 'false');
+        },
+        
+        hideKnowledgeSection: () => {
+          state.elements.knowledgeSection.style.display = 'none';
+          state.elements.knowledgeSection.setAttribute('aria-hidden', 'true');
+        },
+        
+        selectTechniqueInfo: (btn) => {
+          // Remove active class from all buttons
+          state.elements.techniqueBtns.forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          
+          // Add active class to clicked button
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+          
+          // Hide all technique info divs
+          document.querySelectorAll('.technique-info').forEach(div => {
+            div.classList.remove('active');
+          });
+          
+          // Show the selected technique info
+          const techniqueId = btn.getAttribute('data-technique');
+          const targetInfo = document.getElementById(`${techniqueId}-info`);
+          if (targetInfo) {
+            targetInfo.classList.add('active');
+          }
+        },
+        
+        handleVisibilityChange: () => {
+          state.isVisible = document.visibilityState !== 'hidden';
+          
+          // When becoming visible again, ensure timers are accurate
+          if (state.isVisible) {
+            // Could implement more sophisticated time tracking here
+          }
+        },
+        
+        handleUserInteraction: () => {
+          if (!state.hasInteracted) {
+            state.hasInteracted = true;
+            
+            // Try to play all audio elements to satisfy user gesture requirement
+            const audioElements = [
+              state.elements.audioTimer,
+              state.elements.audioComplete,
+              state.elements.audioTransition
+            ];
+            
+            audioElements.forEach(audio => {
+              if (audio) {
+                const promise = audio.play();
+                if (promise !== undefined) {
+                  promise.then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                  }).catch(e => {
+                    // Still not allowed, will try again later
+                    console.log('Audio play blocked by browser policy:', e);
+                  });
+                }
+              }
+            });
+          }
         }
-      }, 1000);
-    }
-
-    function updateExerciseTimer(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      document.getElementById("exerciseTimer").textContent =
-        (minutes < 10 ? "0" + minutes : minutes) + ":" +
-        (secs < 10 ? "0" + secs : secs);
-    }
-
-    function skipExercise() {
-      clearInterval(exerciseInterval);
-      const current = exerciseSegments[currentExerciseIndex];
-      current.status = "done";
-      completedExercises.push({
-        name: current.name,
-        side: current.side,
-        description: current.description,
-        tag: "nothing"
-      });
-      currentExerciseIndex++;
-      startExerciseSegment();
-    }
-
-    /*************************************
-     * FINISH & TAGGING
-     *************************************/
-    function finishExercises() {
-      hideAllPages();
-      document.getElementById("finishSection").classList.remove("hidden");
-      renderCompletedExercises();
-    }
-
-    function renderCompletedExercises() {
-      const doneList = document.getElementById("doneList");
-      doneList.innerHTML = "";
-      completedExercises.forEach((ex, idx) => {
-        const li = document.createElement("li");
-        const fullName = ex.name + (ex.side ? ` (${ex.side})` : "");
-        li.textContent = fullName;
-        li.setAttribute("data-index", idx);
-        li.setAttribute("data-tag", ex.tag); // current tag state
-        li.addEventListener("click", function() {
-          cycleTag(this);
+      };
+      
+      // CORE FUNCTIONS
+      function cacheElements() {
+        // Cache DOM elements for performance
+        state.elements = {
+          appContainer: document.getElementById('appContainer'),
+          loadingContainer: document.getElementById('loadingContainer'),
+          loadingBar: document.getElementById('loadingBar'),
+          
+          // Pages
+          landingPage: document.getElementById('landingPage'),
+          timerSection: document.getElementById('timerSection'),
+          exerciseSection: document.getElementById('exerciseSection'),
+          finishSection: document.getElementById('finishSection'),
+          knowledgeSection: document.getElementById('knowledgeSection'),
+          
+          // Buttons
+          startButton: document.getElementById('startButton'),
+          skipTimerButton: document.getElementById('skipTimerButton'),
+          nextExerciseButton: document.getElementById('nextExerciseButton'),
+          restartButton: document.getElementById('restartButton'),
+          focusButton: document.getElementById('focusButton'),
+          infoButton: document.getElementById('infoButton'),
+          backButton: document.getElementById('backButton'),
+          installButton: document.getElementById('installButton'),
+          
+          // Timer elements
+          timerCountdown: document.getElementById('timerCountdown'),
+          timerProgress: document.getElementById('timerProgress'),
+          
+          // Exercise elements
+          exerciseImage: document.getElementById('exerciseImage'),
+          exerciseTitle: document.getElementById('exerciseTitle'),
+          exerciseSubtitle: document.getElementById('exerciseSubtitle'),
+          exerciseTimer: document.getElementById('exerciseTimer'),
+          exerciseProgress: document.getElementById('exerciseProgress'),
+          
+          // Finish elements
+          doneList: document.getElementById('doneList'),
+          
+          // Learn more
+          techniqueBtns: document.querySelectorAll('.technique-btn'),
+          
+          // Audio
+          audioTimer: document.getElementById('audioTimer'),
+          audioComplete: document.getElementById('audioComplete'),
+          audioTransition: document.getElementById('audioTransition'),
+          
+          // Notifications
+          toastContainer: document.getElementById('toastContainer')
+        };
+        
+        state.loadedResources.dom = true;
+        checkAllResourcesLoaded();
+      }
+      
+      function initializeAudio() {
+        // Set audio sources
+        const audioElements = [
+          { element: state.elements.audioTimer, src: AUDIO_SOURCES.timer },
+          { element: state.elements.audioComplete, src: AUDIO_SOURCES.complete },
+          { element: state.elements.audioTransition, src: AUDIO_SOURCES.transition }
+        ];
+        
+        // Calculate total loading steps
+        const totalSteps = audioElements.length;
+        let completedSteps = 0;
+        
+        // Update loading progress
+        function updateLoadingProgress() {
+          if (state.elements.loadingBar) {
+            const progress = (completedSteps / totalSteps) * 100;
+            state.elements.loadingBar.style.width = `${progress}%`;
+          }
+        }
+        
+        // Create a promise for each audio element
+        const audioPromises = audioElements.map(({element, src}) => {
+          return new Promise((resolve) => {
+            if (!element) {
+              completedSteps++;
+              updateLoadingProgress();
+              resolve();
+              return;
+            }
+            
+            // For debugging/development, use default audio if source doesn't exist
+            element.src = src || 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAASAAAeMwAUFBQUFBQUFBQUFBQ+Pj4+Pj4+Pj4+Pj5SUlJSUlJSUlJSUlJSmZmZmZmZmZmZmZmZmc3Nzc3Nzc3Nzc3Nzc3N/////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UGQAAADsAEhaKAAAAAgAILQAAAD0gnQlpRgAgAAA/QAAABEvU88tuVIEJlC5hglOmQIECBAgQZREZ/fn/nDweDi'+
+            'eDmELkAgMWFjAhYIOh4Ph4Pf+fP/5w8Hw+GQ8Z/MEGCxYsMGFgUK0uHP/+cPB4Oh8Mh65QQGLCxgwsCBeHg9/5w//nDwfD4ZDxneUEBiwsYMLAg14eD3/nD/+cPB8PhkPGd5QQGLCxgwsCDXh4Pf+cP/5w8Hw+GQ8Z3lBAYsLGDCwINeHg9/5w//nDwfD4ZDxneUEBiwsYMLAg14eD3/nD/+cPB8PhkPGd5A==';
+            
+            // Handle successful loading
+            element.addEventListener('canplaythrough', () => {
+              completedSteps++;
+              updateLoadingProgress();
+              resolve();
+            }, { once: true });
+            
+            // Handle errors but continue
+            element.addEventListener('error', (e) => {
+              console.warn(`Failed to load audio: ${src}`, e);
+              completedSteps++;
+              updateLoadingProgress();
+              resolve(); // Resolve anyway to not block the app
+            });
+            
+            // Handle timeout - don't wait forever
+            setTimeout(() => {
+              if (element.readyState < 4) {
+                console.warn(`Audio load timeout: ${src}`);
+                completedSteps++;
+                updateLoadingProgress();
+                resolve();
+              }
+            }, 5000);
+          });
         });
-        doneList.appendChild(li);
-      });
-    }
-
-    // Cycle through "nothing" -> "more" -> "less" -> "nothing"
-    function cycleTag(li) {
-      let idx = parseInt(li.getAttribute("data-index"));
-      let currentTag = li.getAttribute("data-tag");
-      let nextIndex;
-      if (currentTag === "nothing") {
-        nextIndex = 1;
-      } else if (currentTag === "more") {
-        nextIndex = 2;
-      } else {
-        nextIndex = 0;
+        
+        // Wait for all audio to load or timeout
+        Promise.all(audioPromises)
+          .then(() => {
+            state.isAudioReady = true;
+            state.loadedResources.audio = true;
+            checkAllResourcesLoaded();
+          })
+          .catch(error => {
+            console.error("Audio loading error:", error);
+            // Continue anyway with potentially limited audio
+            state.isAudioReady = false;
+            state.loadedResources.audio = true; // Mark as "complete" even if failed
+            checkAllResourcesLoaded();
+          });
       }
-      const newTag = tagStates[nextIndex];
-      li.setAttribute("data-tag", newTag);
-
-      const baseText = completedExercises[idx].name +
-        (completedExercises[idx].side ? ` (${completedExercises[idx].side})` : "");
-      li.textContent = (newTag !== "nothing")
-        ? `${baseText} [${newTag.toUpperCase()}]`
-        : baseText;
-
-      // Update probability in the pool
-      const poolItem = exercisesPool.find(e => e.name === completedExercises[idx].name);
-      if (poolItem) {
-        if (newTag === "more") {
-          poolItem.probability = 2;
-        } else if (newTag === "less") {
-          poolItem.probability = 0.5;
-        } else {
-          poolItem.probability = 1;
+      
+      function preloadImages() {
+        // Preload exercise images
+        const images = exercisesPool.map(exercise => exercise.image);
+        const uniqueImages = [...new Set(images)]; // Remove duplicates
+        
+        const totalImages = uniqueImages.length;
+        let loadedImages = 0;
+        
+        function updateLoadingProgress() {
+          if (state.elements.loadingBar) {
+            // Combine with audio progress (assume 50% for images, 50% for audio)
+            const progress = ((loadedImages / totalImages) * 50) + 
+                           (state.loadedResources.audio ? 50 : 0);
+            state.elements.loadingBar.style.width = `${progress}%`;
+          }
+        }
+        
+        const imagePromises = uniqueImages.map(src => {
+          return new Promise((resolve) => {
+            const img = new Image();
+            
+            img.onload = () => {
+              loadedImages++;
+              updateLoadingProgress();
+              resolve();
+            };
+            
+            img.onerror = () => {
+              console.warn(`Failed to load image: ${src}`);
+              loadedImages++;
+              updateLoadingProgress();
+              resolve(); // Resolve anyway to not block the app
+            };
+            
+            // Handle timeout
+            setTimeout(() => {
+              if (!img.complete) {
+                console.warn(`Image load timeout: ${src}`);
+                loadedImages++;
+                updateLoadingProgress();
+                resolve();
+              }
+            }, 5000);
+            
+            img.src = src;
+          });
+        });
+        
+        // If no images to load, resolve immediately
+        if (imagePromises.length === 0) {
+          state.loadedResources.images = true;
+          checkAllResourcesLoaded();
+          return;
+        }
+        
+        Promise.all(imagePromises)
+          .then(() => {
+            state.loadedResources.images = true;
+            checkAllResourcesLoaded();
+          })
+          .catch(error => {
+            console.error("Image loading error:", error);
+            state.loadedResources.images = true; // Mark as complete anyway
+            checkAllResourcesLoaded();
+          });
+      }
+      
+      function checkAllResourcesLoaded() {
+        // Check if all resources are loaded
+        if (state.loadedResources.dom && 
+            state.loadedResources.audio && 
+            state.loadedResources.images) {
+          // Small delay to ensure UI is ready
+          setTimeout(() => {
+            // Fade out loading screen
+            state.elements.loadingContainer.style.opacity = '0';
+            setTimeout(() => {
+              state.elements.loadingContainer.style.display = 'none';
+            }, 500);
+            
+            // Show app content with fade in
+            state.elements.appContainer.style.opacity = '1';
+            
+            // Show iOS install instructions if appropriate
+            showIOSInstallInstructions();
+          }, 500);
         }
       }
-      // Also update the stored tag
-      completedExercises[idx].tag = newTag;
-    }
-
-    function restartTimer() {
-      hideAllPages();
-      document.getElementById("timerSection").classList.remove("hidden");
-      startTimer();
-    }
+      
+      function showIOSInstallInstructions() {
+        // Only show for iOS Safari
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        
+        // Check if already installed as PWA
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone;
+        
+        if (isIOS && isSafari && !isStandalone) {
+          // Check if we've shown the tip recently
+          const lastDismissed = localStorage.getItem('ios-install-tip-dismissed');
+          const dayInMs = 24 * 60 * 60 * 1000;
+          
+          // Only show once per day
+          if (!lastDismissed || (Date.now() - parseInt(lastDismissed)) > dayInMs) {
+            // Create installation tip
+            const installTip = document.createElement('div');
+            installTip.className = 'ios-install-tip';
+            installTip.innerHTML = `
+              <div class="tip-content">
+                <p>Install this app on your iPhone: tap <strong>Share</strong> <span class="share-icon">↑</span> then <strong>Add to Home Screen</strong></p>
+                <button class="close-tip">×</button>
+              </div>
+            `;
+            
+            document.body.appendChild(installTip);
+            
+            // Handle close button
+            installTip.querySelector('.close-tip').addEventListener('click', () => {
+              installTip.style.display = 'none';
+              
+              // Store in localStorage to prevent showing again too soon
+              localStorage.setItem('ios-install-tip-dismissed', Date.now());
+            });
+          }
+        }
+      }
+      
+      function attachEventListeners() {
+        // First interaction for audio playback
+        document.addEventListener('click', handlers.handleUserInteraction, { once: true });
+        document.addEventListener('touchstart', handlers.handleUserInteraction, { once: true });
+        
+        // Main navigation buttons
+        state.elements.startButton.addEventListener('click', handlers.startApp);
+        state.elements.skipTimerButton.addEventListener('click', handlers.skipTimer);
+        state.elements.nextExerciseButton.addEventListener('click', handlers.skipExercise);
+        state.elements.restartButton.addEventListener('click', handlers.finishAndRestart);
+        
+        // Focus mode toggle
+        state.elements.focusButton.addEventListener('click', handlers.toggleFocusMode);
+        
+        // Info button
+        state.elements.infoButton.addEventListener('click', handlers.showKnowledgeSection);
+        
+        // Back button in knowledge section
+        state.elements.backButton.addEventListener('click', handlers.hideKnowledgeSection);
+        
+        // Knowledge Section Navigation
+        state.elements.techniqueBtns.forEach(btn => {
+          btn.addEventListener('click', () => handlers.selectTechniqueInfo(btn));
+        });
+        
+        // Tab visibility changes
+        document.addEventListener('visibilitychange', handlers.handleVisibilityChange);
+        
+        // Install button event
+        if (state.elements.installButton) {
+          state.elements.installButton.addEventListener('click', handleInstallClick);
+        }
+        
+        // Escape key closes panels
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            if (state.elements.knowledgeSection.style.display === 'block') {
+              handlers.hideKnowledgeSection();
+            }
+          }
+        });
+      }
+      
+      // TIMER FUNCTIONS
+      function startTimer() {
+        state.timerRemaining = DEFAULTS.WORK_DURATION;
+        updateTimerDisplay();
+        
+        const progressBar = state.elements.timerProgress;
+        progressBar.style.width = "100%";
+        
+        clearInterval(state.timerInterval);
+        
+        state.timerInterval = setInterval(() => {
+          state.timerRemaining--;
+          updateTimerDisplay();
+          
+          // Update progress bar
+          const percentRemaining = (state.timerRemaining / DEFAULTS.WORK_DURATION) * 100;
+          progressBar.style.width = percentRemaining + "%";
+          
+          // Play a tick sound every minute (or when 1 minute remains)
+          if (state.timerRemaining > 0 && 
+              (state.timerRemaining % 60 === 0 || state.timerRemaining === 60)) {
+            utils.playAudio('timer');
+          }
+          
+          if (state.timerRemaining <= 0) {
+            clearInterval(state.timerInterval);
+            utils.playAudio('complete');
+            utils.triggerHaptic(HAPTIC_PATTERNS.timerComplete);
+            goToExercises();
+          }
+        }, 1000);
+      }
+      
+      function updateTimerDisplay() {
+        state.elements.timerCountdown.textContent = utils.formatTime(state.timerRemaining);
+      }
+      
+      // EXERCISE FUNCTIONS
+      function goToExercises() {
+        // Switch to exercise page
+        utils.showPage('exerciseSection');
+        
+        // Generate new exercise segments
+        generateExerciseSegments();
+        
+        // Reset state
+        state.currentExerciseIndex = 0;
+        state.completedExercises = [];
+        
+        // Start the first exercise
+        startExerciseSegment();
+        
+        // Play transition sound
+        utils.playAudio('transition');
+      }
+      
+      function generateExerciseSegments() {
+        state.exerciseSegments = [];
+        
+        // Shuffle and create a weighted distribution based on probability
+        let shuffled = [];
+        exercisesPool.forEach(exercise => {
+          // Add multiple entries based on probability
+          const entries = exercise.probability > 1 ? 
+                        Math.floor(exercise.probability) : 
+                        (exercise.probability < 1 ? 0.5 : 1);
+          
+          for (let i = 0; i < entries * 2; i++) {
+            shuffled.push(exercise);
+          }
+        });
+        
+        // Shuffle the weighted array
+        shuffled = utils.shuffle(shuffled);
+        
+        // Select unique exercises (up to MAX_EXERCISES)
+        const selectedExercises = [];
+        let totalSegments = 0;
+        
+        for (let ex of shuffled) {
+          // Skip if already selected
+          if (selectedExercises.find(e => e.name === ex.name)) continue;
+          
+          const needed = ex.unilateral ? 2 : 1;
+          if (totalSegments + needed <= DEFAULTS.MAX_EXERCISES) {
+            selectedExercises.push(ex);
+            if (ex.unilateral) {
+              state.exerciseSegments.push({ ...ex, side: "Left", status: "upcoming" });
+              state.exerciseSegments.push({ ...ex, side: "Right", status: "upcoming" });
+            } else {
+              state.exerciseSegments.push({ ...ex, side: "", status: "upcoming" });
+            }
+            totalSegments += needed;
+          }
+          
+          if (totalSegments >= DEFAULTS.MAX_EXERCISES) break;
+        }
+      }
+      
+      function startExerciseSegment() {
+        // Check if we've completed all exercises
+        if (state.currentExerciseIndex >= state.exerciseSegments.length) {
+          finishExercises();
+          return;
+        }
+        
+        // Mark current as ongoing
+        state.exerciseSegments.forEach((seg, i) => {
+          if (i === state.currentExerciseIndex) {
+            seg.status = "ongoing";
+          } else if (seg.status !== "done") {
+            seg.status = "upcoming";
+          }
+        });
+        
+        // Get current exercise
+        const current = state.exerciseSegments[state.currentExerciseIndex];
+        
+        // Update UI
+        const fullName = current.name + (current.side ? ` (${current.side})` : "");
+        state.elements.exerciseImage.src = current.image;
+        state.elements.exerciseImage.alt = fullName;
+        state.elements.exerciseTitle.textContent = fullName;
+        state.elements.exerciseSubtitle.textContent = current.description;
+        
+        // Set up timer
+        state.exerciseRemaining = DEFAULTS.EXERCISE_DURATION;
+        updateExerciseTimer();
+        
+        // Set up progress bar
+        const progressBar = state.elements.exerciseProgress;
+        progressBar.style.width = "100%";
+        
+        // Clear any existing interval
+        clearInterval(state.exerciseInterval);
+        
+        // Play start sound and vibration
+        utils.playAudio('transition');
+        utils.triggerHaptic(HAPTIC_PATTERNS.exerciseStart);
+        
+        // Start new interval
+        state.exerciseInterval = setInterval(() => {
+          state.exerciseRemaining--;
+          updateExerciseTimer();
+          
+          // Update progress bar
+          const percentRemaining = (state.exerciseRemaining / DEFAULTS.EXERCISE_DURATION) * 100;
+          progressBar.style.width = percentRemaining + "%";
+          
+          if (state.exerciseRemaining <= 0) {
+            clearInterval(state.exerciseInterval);
+            
+            // Play completion sound
+            utils.playAudio('complete');
+            utils.triggerHaptic(HAPTIC_PATTERNS.exerciseComplete);
+            
+            // Mark as done + add to completed
+            state.exerciseSegments[state.currentExerciseIndex].status = "done";
+            state.completedExercises.push({
+              name: current.name,
+              side: current.side,
+              description: current.description,
+              tag: "nothing"
+            });
+            
+            // Move to next exercise
+            state.currentExerciseIndex++;
+            startExerciseSegment();
+          }
+        }, 1000);
+      }
+      
+      function updateExerciseTimer() {
+        state.elements.exerciseTimer.textContent = utils.formatTime(state.exerciseRemaining);
+      }
+      
+      function finishExercises() {
+        // Clear any intervals
+        clearInterval(state.exerciseInterval);
+        
+        // Show completion vibration
+        utils.triggerHaptic(HAPTIC_PATTERNS.sessionComplete);
+        
+        // Switch to finish page
+        utils.showPage('finishSection');
+        
+        // Render the completed exercises list
+        renderCompletedExercises();
+        
+        // Play completion sound
+        utils.playAudio('complete');
+      }
+      
+      function renderCompletedExercises() {
+        const doneList = state.elements.doneList;
+        doneList.innerHTML = "";
+        
+        state.completedExercises.forEach((ex, idx) => {
+          const li = document.createElement("li");
+          const fullName = ex.name + (ex.side ? ` (${ex.side})` : "");
+          li.textContent = fullName;
+          li.setAttribute("data-index", idx);
+          li.setAttribute("data-tag", ex.tag); // current tag state
+          li.addEventListener("click", () => handlers.cycleTag(li));
+          doneList.appendChild(li);
+        });
+      }
+      
+      // PWA INSTALLATION FUNCTIONALITY
+      let deferredPrompt;
+      
+      // Handle the beforeinstallprompt event
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the default browser prompt
+        e.preventDefault();
+        // Store the event for later use
+        deferredPrompt = e;
+        // Show the install button
+        if (state.elements.installButton) {
+          state.elements.installButton.style.display = 'block';
+        }
+      });
+      
+      // Handle the install button click
+      function handleInstallClick() {
+        if (!deferredPrompt) return;
+        
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond
+        deferredPrompt.userChoice.then((choiceResult) => {
+          // Reset the deferred prompt variable
+          deferredPrompt = null;
+          
+          // Hide the install button
+          if (state.elements.installButton) {
+            state.elements.installButton.style.display = 'none';
+          }
+          
+          // If installed, show a toast
+          if (choiceResult.outcome === 'accepted') {
+            utils.showToast('App installed successfully!');
+          }
+        });
+      }
+      
+      // Handle the appinstalled event
+      window.addEventListener('appinstalled', (e) => {
+        // Hide the install button
+        if (state.elements.installButton) {
+          state.elements.installButton.style.display = 'none';
+        }
+        
+        // Show a toast
+        utils.showToast('App installed successfully!');
+      });
+      
+      // INITIALIZATION
+      function init() {
+        cacheElements();
+        initializeAudio();
+        preloadImages();
+        attachEventListeners();
+        
+        // Set initial ARIA states
+        utils.setAriaState(state.elements.focusButton, 'aria-pressed', false);
+        
+        // Hide the install button initially (will show when ready)
+        if (state.elements.installButton) {
+          state.elements.installButton.style.display = 'none';
+        }
+        
+        // Register service worker for offline support if available
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            // Adjust path based on environment
+            const swPath = location.hostname === 'localhost' ? 
+              '/service-worker.js' : 
+              '/hagius-active/service-worker.js';
+              
+            navigator.serviceWorker.register(swPath)
+              .then(registration => {
+                console.log('ServiceWorker registered with scope:', registration.scope);
+              })
+              .catch(error => {
+                console.log('ServiceWorker registration failed:', error);
+              });
+          });
+        }
+      }
+      
+      // Initialize the app when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
   </script>
 </body>
 </html>
