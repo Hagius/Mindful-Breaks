@@ -49,6 +49,13 @@
       --font-size-header: 2.4rem;
       --element-padding: 15px;
       --min-button-width: 120px; /* Minimum width for buttons before wrapping */
+      
+      /* Vertical rhythm units based on golden ratio and rule of thirds */
+      --vru-base: 2vh; /* Base vertical rhythm unit */
+      --vru-small: calc(var(--vru-base) * 0.618); /* Golden ratio small unit */
+      --vru-medium: var(--vru-base); /* Standard unit */
+      --vru-large: calc(var(--vru-base) * 1.618); /* Golden ratio large unit */
+      --vru-xlarge: calc(var(--vru-base) * 2.618); /* Golden ratio larger unit */
     }
     
     html {
@@ -165,7 +172,7 @@
     /* Header */
     .header {
       position: fixed;
-      top: 5vh;
+      top: calc(var(--vru-xlarge) * 1.5);
       left: 0;
       right: 0;
       text-align: center;
@@ -191,9 +198,9 @@
       margin-bottom: 0;
     }
     
-    /* Create spacing for exercise page */
+    /* Create bottom whitespace for exercise page */
     #exerciseSection .progress-container {
-      margin-top: 20px;
+      margin-top: var(--vru-large);
     }
     
     /* Hide progress container when landing page is active */
@@ -354,9 +361,16 @@
       justify-content: space-between;
       width: 100%;
       max-width: 700px;
-      height: calc(100vh - 10vh - var(--element-height) - var(--button-spacing) - env(safe-area-inset-bottom) - env(safe-area-inset-top));
+      /* 
+       * Use the golden ratio for vertical spacing:
+       * - Logo positioned at top (var(--vru-xlarge) * 1.5)
+       * - Bottom buttons & progress bar have fixed height
+       * - The content area takes remaining space according to golden ratio proportions
+       */
+      height: 100vh;
       margin: 0 auto;
-      padding: 5vh 20px 0;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
     
     /* Flexible container for exercise content */
@@ -364,10 +378,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       width: 100%;
-      height: 100%;
-      overflow: hidden;
+      /* 
+       * Position this container at the golden section of the available space
+       * between the logo and the progress bar
+       */
+      margin-top: calc(var(--vru-xlarge) * 3);
+      /* Allow space at the bottom before progress bar */
+      margin-bottom: auto;
+      flex: 1;
     }
     
     .exercise-display {
@@ -376,9 +396,10 @@
       max-width: 300px;
       aspect-ratio: 3/4; /* Taller than wide (3:4 ratio) */
       background: var(--white-transparent-light);
-      margin: 5vh auto 15px auto;
+      margin: 0 auto var(--vru-large); /* Use golden ratio spacing below */
       flex: 0 1 auto;
-      max-height: 50vh;
+      /* Maximum height is proportional to viewport using rule of thirds */
+      max-height: 38vh;
       min-height: 200px;
       display: flex;
       align-items: center;
@@ -403,8 +424,8 @@
     
     .exercise-text-container {
       width: 100%;
-      margin-top: 10px;
-      margin-bottom: 20px;
+      margin-top: 0;
+      margin-bottom: var(--vru-xlarge);
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
@@ -412,7 +433,7 @@
     }
     
     #exerciseTitle {
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--vru-small);
       letter-spacing: 1px;
       font-size: 1.6rem;
       text-transform: uppercase;
@@ -809,14 +830,18 @@
         --font-size-header: 3rem;
         --element-padding: 18px;
         --min-button-width: 140px;
+        --vru-base: 2.5vh; /* Slightly larger base unit for bigger screens */
       }
       .exercise-display { 
         max-width: 350px; 
-        max-height: 55vh;
+        max-height: 42vh; /* Adjusted for golden ratio proportions */
       }
       .logo { max-width: 240px; }
       #exerciseTitle { font-size: 2rem; }
       #exerciseSubtitle { font-size: 1.1rem; }
+      .exercise-content-container {
+        margin-top: calc(var(--vru-xlarge) * 3.5); /* Greater spacing for larger screens */
+      }
     }
     
     @media (max-width: 480px) {
@@ -824,33 +849,52 @@
         --element-height: 50px;
         --font-size-button: 0.4;
         --element-padding: 12px;
+        --vru-base: 1.5vh; /* Smaller base unit for mobile */
       }
       .exercise-display { 
         max-width: 250px;
-        max-height: 45vh;
+        max-height: 35vh;
         min-height: 180px;
       }
       #exerciseTitle { font-size: 1.4rem; }
       #exerciseSubtitle { font-size: 0.9rem; }
+      .exercise-content-container {
+        margin-top: calc(var(--vru-xlarge) * 2.5); /* Less spacing for mobile */
+      }
     }
     
     /* Additional tablet size adjustments */
     @media (min-width: 481px) and (max-width: 767px) {
+      :root {
+        --vru-base: 2vh; /* Middle size base unit for tablets */
+      }
       .exercise-display {
         max-width: 280px;
-        max-height: 50vh;
+        max-height: 38vh;
       }
       #exerciseTitle { font-size: 1.7rem; }
+      .exercise-content-container {
+        margin-top: calc(var(--vru-xlarge) * 3); /* Middle spacing for tablets */
+      }
     }
     
-    /* Height-based adjustments */
+    /* Height-based adjustments for shorter screens */
     @media (max-height: 600px) {
+      :root {
+        --vru-base: 1.2vh; /* Even smaller units for short screens */
+      }
+      .header {
+        top: calc(var(--vru-xlarge) * 1.2); /* Move logo up slightly */
+      }
       .exercise-display {
         min-height: 150px;
-        max-height: 40vh;
+        max-height: 32vh;
       }
-      #exerciseTitle { font-size: 1.3rem; margin-bottom: 0.3rem; }
+      #exerciseTitle { font-size: 1.3rem; margin-bottom: var(--vru-small); }
       #exerciseSubtitle { font-size: 0.85rem; }
+      .exercise-content-container {
+        margin-top: calc(var(--vru-xlarge) * 2); /* Reduced spacing for short screens */
+      }
     }
     
     /* Fallback for browsers that don't support aspect-ratio */
